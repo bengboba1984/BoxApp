@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:background="@color/gray_bg" android:layout_width="fill_parent" android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <include android:id="@id/title_bar" android:layout_width="fill_parent" android:layout_height="wrap_content" layout="@layout/app_action_bar_layout" />
+    <TextView android:textSize="@dimen/font_middle" android:textColor="@color/blue"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:layout_margin="@dimen/magin_middle" android:text="平台地址" />
+    <LinearLayout android:orientation="horizontal" android:visibility="gone"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/magin_big" android:layout_marginRight="@dimen/magin_big">
+        <TextView android:visibility="gone" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="URL" />
+        <TextView android:gravity="end" android:id="@id/setting_url" android:visibility="gone"
+            android:layout_width="0.0dip" android:layout_height="wrap_content"
+            android:text="http://172.30.1.120:3012" android:layout_weight="1.0" />
+        <ImageView android:layout_gravity="center" android:id="@id/setting_url_btn"
+            android:visibility="gone" android:layout_width="16.0dip" android:layout_height="16.0dip"
+            android:layout_marginLeft="@dimen/magin_middle" android:src="@mipmap/logout_bg" />
+    </LinearLayout>
+    <View android:background="@color/text_black" android:visibility="gone"
+        android:layout_width="fill_parent" android:layout_height="1.0dip" android:layout_marginTop="@dimen/magin_middle" />
+    <TextView android:textSize="@dimen/font_middle" android:textColor="@color/blue" android:visibility="gone"
+        android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:layout_margin="@dimen/magin_middle" android:text="探针测试地址" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/magin_big"
+        android:layout_marginRight="@dimen/magin_big"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="URL" />
+
+        <TextView
+            android:id="@id/setting_forig_url"
+            android:layout_width="0.0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:gravity="end"
+            android:text="http://172.30.1.120:3012" />
+
+        <ImageView
+            android:id="@id/setting_forig_url_btn"
+            android:layout_width="16.0dip"
+            android:layout_height="16.0dip"
+            android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/magin_middle"
+            android:src="@mipmap/logout_bg" />
+    </LinearLayout>
+
+    <View android:background="@color/text_black" android:visibility="gone" android:layout_width="fill_parent"
+        android:layout_height="1.0dip" android:layout_marginTop="@dimen/magin_middle" />
+    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent"
+        android:layout_height="wrap_content" android:layout_margin="@dimen/magin_big">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="URL" />
+        <EditText android:gravity="end" android:id="@id/setting_forig_url_edit" android:background="@null"
+            android:paddingRight="@dimen/magin_middle" android:layout_width="0.0dip"
+            android:layout_height="wrap_content" android:text="http://172.30.1.120:3012" android:layout_weight="1.0" />
+    </LinearLayout>
+    <Button android:id="@id/setting_btn" android:layout_marginLeft="@dimen/magin_big"
+        android:layout_marginTop="40.0dip" android:layout_marginRight="@dimen/magin_big"
+        android:textColor="@color/white"
+        android:text="@string/ok" style="@style/button" />
+</LinearLayout>

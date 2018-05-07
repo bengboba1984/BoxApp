@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:background="@color/white" android:layout_width="fill_parent" android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <include android:id="@id/title_bar" android:layout_width="fill_parent" android:layout_height="wrap_content" layout="@layout/app_action_bar_layout" />
+    <LinearLayout android:id="@id/custom_layout" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_margin="@dimen/magin_big">
+        <TextView android:id="@id/custom_key" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="@dimen/magin_middle" android:text="宽带账号" />
+
+        <EditText
+            android:id="@id/custom_account"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/magin_big"
+            android:layout_marginRight="@dimen/magin_big"
+            android:background="@null"
+            android:gravity="right" />
+    </LinearLayout>
+    <View style="@style/underline" />
+    <Button android:textColor="@color/white" android:id="@id/custom_sure" android:layout_margin="@dimen/magin_big" android:text="@string/sure" style="@style/button" />
+</LinearLayout>

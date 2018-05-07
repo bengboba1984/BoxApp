@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:background="@color/gray_bg" android:layout_width="fill_parent" android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView android:textSize="@dimen/font_middle" android:padding="@dimen/magin_big" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="测试结果" />
+    <ListView android:id="@id/test_result_listview" android:layout_width="fill_parent" android:layout_height="wrap_content" android:divider="@color/edit_back" android:dividerHeight="1.0dip" />
+    <TextView android:textSize="@dimen/font_middle" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/magin_middle" android:text="测试结论" />
+    <TextView android:textSize="@dimen/font_small" android:id="@id/test_result_conclusion" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/magin_middle" android:text="测试结果一切正常" />
+</LinearLayout>

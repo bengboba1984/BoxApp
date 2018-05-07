@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="main_title">18.0sp</dimen>
+    <dimen name="main_padding">5.0dip</dimen>
+    <dimen name="magin_small">5.0dip</dimen>
+    <dimen name="magin_middle">10.0dip</dimen>
+    <dimen name="magin_big">20.0dip</dimen>
+    <dimen name="font_middle">16.0sp</dimen>
+    <dimen name="magin_bigger">30.0dip</dimen>
+    <dimen name="font_small">14.0sp</dimen>
+</resources>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <include android:id="@id/title_bar" android:layout_width="fill_parent" android:layout_height="wrap_content" layout="@layout/app_action_bar_layout" />
+    <com.fkty.mobileiq.distribution.view.LinearView android:id="@id/ott_connect_pppoe" android:layout_width="fill_parent" android:layout_height="wrap_content" />
+    <com.fkty.mobileiq.distribution.view.EditView android:id="@id/ott_connect_pppoe_user" style="@style/ott_connect_content" />
+    <com.fkty.mobileiq.distribution.view.EditView android:id="@id/ott_connect_pppoe_pwd" style="@style/ott_connect_content" />
+    <com.fkty.mobileiq.distribution.view.LinearView android:id="@id/ott_connect_static" android:layout_width="fill_parent" android:layout_height="wrap_content" />
+    <com.fkty.mobileiq.distribution.view.EditView android:id="@id/ott_connect_static_ip" style="@style/ott_connect_content" />
+    <com.fkty.mobileiq.distribution.view.EditView android:id="@id/ott_connect_static_subnet" style="@style/ott_connect_content" />
+    <com.fkty.mobileiq.distribution.view.EditView android:id="@id/ott_connect_static_gate" style="@style/ott_connect_content" />
+    <com.fkty.mobileiq.distribution.view.EditView android:id="@id/ott_connect_static_dns" style="@style/ott_connect_content" />
+    <com.fkty.mobileiq.distribution.view.LinearView android:id="@id/ott_connect_dhcp" android:layout_width="fill_parent" android:layout_height="wrap_content" />
+    <com.fkty.mobileiq.distribution.view.LinearView android:id="@id/ott_connect_bridge" android:layout_width="fill_parent" android:layout_height="wrap_content" />
+    <Button android:textColor="@color/white" android:id="@id/ott_connect_btn" android:layout_margin="@dimen/magin_big" android:text="应用此配置" style="@style/button" />
+</LinearLayout>

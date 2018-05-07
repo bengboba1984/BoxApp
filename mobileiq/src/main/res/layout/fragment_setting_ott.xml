@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <ScrollView android:layout_width="fill_parent" android:layout_height="fill_parent">
+        <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent">
+            <TextView android:textSize="@dimen/font_middle" android:textColor="@color/blue" android:id="@id/ott_connect_type_revise"
+                android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_margin="@dimen/magin_middle"
+                android:text="@string/ott_setting_revise_connect" />
+            <TextView android:textSize="@dimen/font_middle" android:id="@id/ott_connect_type" android:layout_width="fill_parent"
+                android:layout_height="wrap_content" android:layout_margin="@dimen/magin_middle" android:text="@string/ott_setting_pppoe" />
+            <com.fkty.mobileiq.distribution.ui.MyListview android:id="@id/ott_connect_type_listview" android:layout_width="fill_parent"
+                android:layout_height="wrap_content" android:layout_marginLeft="20.0dip" android:divider="@null" />
+            <View android:background="@color/gray_bg" android:layout_width="fill_parent" android:layout_height="1.0dip" />
+            <TextView android:textSize="@dimen/font_middle" android:textColor="@color/blue" android:id="@id/ott_restart"
+                android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_margin="@dimen/magin_middle"
+                android:text="@string/ott_setting_restart" />
+            <View android:background="@color/gray_bg" android:layout_width="fill_parent" android:layout_height="1.0dip" />
+            <TextView android:textSize="@dimen/font_middle" android:textColor="@color/blue" android:id="@id/ott_reset"
+                android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_margin="@dimen/magin_middle"
+                android:text="@string/ott_setting_reset" />
+            <View android:background="@color/gray_bg" android:layout_width="fill_parent" android:layout_height="1.0dip" />
+            <TextView android:textSize="@dimen/font_middle" android:id="@id/ott_device_info" android:layout_width="fill_parent"
+                android:layout_height="wrap_content" android:layout_margin="@dimen/magin_middle" android:text="@string/ott_setting_device_info" />
+            <com.fkty.mobileiq.distribution.ui.MyListview android:id="@id/ott_device_info_listview" android:layout_width="fill_parent"
+                android:layout_height="fill_parent" android:layout_marginLeft="20.0dip" android:divider="@null" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

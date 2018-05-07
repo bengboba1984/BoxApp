@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.fkty.mobileiq.distribution.app.activity.LoginActivity">
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
+
+
+        <include
+            android:id="@id/title_bar"
+            layout="@layout/app_action_bar_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:layout_gravity="center"
+            android:layout_width="fill_parent"
+            android:layout_height="0.0dip"
+            android:layout_marginTop="20.0dip"
+            android:src="@mipmap/img"
+            android:layout_weight="1.0" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0.0dip"
+            android:orientation="vertical"
+            android:layout_margin="@dimen/magin_big" android:layout_weight="5.0">
+            <LinearLayout
+                android:background="@drawable/edittext_background"
+                android:padding="@dimen/magin_small"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="15.0dip"
+                    android:layout_height="fill_parent"
+                    android:layout_margin="@dimen/magin_small"
+                    android:src="@mipmap/user"
+                    android:scaleType="fitCenter" />
+                <EditText
+                    android:gravity="center_vertical"
+                    android:id="@id/username"
+                    android:background="@null"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/prompt_username" />
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:background="@drawable/edittext_background"
+                android:padding="@dimen/magin_small"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/magin_middle">
+                <ImageView
+                    android:layout_width="15.0dip"
+                    android:layout_height="fill_parent"
+                    android:layout_margin="@dimen/magin_small"
+                    android:src="@mipmap/lock"
+                    android:scaleType="fitCenter" />
+                <EditText
+                    android:gravity="center_vertical"
+                    android:id="@id/password"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:background="@null"
+                    android:hint="@string/prompt_password"
+                    android:inputType="textPassword" />
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:background="@drawable/edittext_background"
+                android:padding="@dimen/magin_small"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/magin_middle">
+                <EditText
+                    android:gravity="center_vertical"
+                    android:id="@id/jobnumber"
+                    android:background="@null"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_marginLeft="25.0dip"
+                    android:hint="@string/prompt_jobnumber" />
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:id="@id/unit_layout"
+                android:background="@drawable/edittext_background"
+                android:padding="@dimen/magin_small"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/magin_middle">
+                <TextView
+                    android:gravity="center_vertical"
+                    android:id="@id/unit"
+                    android:background="@null"
+                    android:layout_width="0.0dip"
+                    android:layout_height="fill_parent"
+                    android:layout_marginLeft="20.0dip"
+                    android:hint="@string/prompt_unit"
+                    android:layout_weight="1.0" />
+                <ImageView
+                    android:id="@id/unit_select"
+                    android:layout_width="15.0dip"
+                    android:layout_height="fill_parent"
+                    android:layout_margin="@dimen/magin_small"
+                    android:src="@mipmap/down"
+                    android:scaleType="fitCenter" />
+            </LinearLayout>
+            <Button
+                android:textSize="@dimen/font_middle"
+                android:textColor="@color/white"
+                android:id="@id/login_btn"
+                android:background="@color/btn_blue"
+                android:text="@string/login"
+                style="@style/button" />
+        </LinearLayout>
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

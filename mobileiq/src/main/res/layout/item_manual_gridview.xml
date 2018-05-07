@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView android:textSize="@dimen/font_small" android:textColor="@color/black" android:gravity="center_vertical" android:id="@id/item_gridview_title" android:paddingTop="10.0dip" android:paddingBottom="10.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="跟新升级配置" android:layout_weight="1.0" />
+    <EditText android:textSize="@dimen/font_small" android:gravity="center|right" android:layout_gravity="center_vertical" android:id="@id/item_gridview_content" android:background="@color/gray_bg" android:paddingRight="@dimen/magin_big" android:layout_width="0.0dip" android:layout_height="fill_parent" android:text="" android:layout_weight="3.0" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
+</LinearLayout>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:gravity="center_horizontal" android:orientation="vertical" android:background="@color/gray_bg"
+    android:padding="@dimen/magin_big" android:layout_width="fill_parent" android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <ImageView android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/magin_big"
+        android:src="@mipmap/img1" />
+    <TextView android:gravity="center_horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/magin_big" android:text="@string/wifi_disconnect" />
+    <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/magin_big">
+        <LinearLayout android:gravity="center_horizontal" android:orientation="vertical" android:layout_width="wrap_content"
+            android:layout_height="fill_parent">
+            <TextView android:textColor="@color/white" android:gravity="center" android:background="@mipmap/bg_dot"
+                android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1" />
+            <View android:background="@color/btn_green" android:layout_width="1.0dip" android:layout_height="30.0dip"
+                android:layout_margin="3.0dip" />
+            <TextView android:gravity="center" android:background="@mipmap/bg_dot" android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:text="2" />
+            <View android:background="@color/btn_green" android:layout_width="1.0dip" android:layout_height="30.0dip" android:layout_margin="3.0dip" />
+            <TextView android:gravity="center" android:background="@mipmap/bg_dot" android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:text="3" />
+        </LinearLayout>
+        <LinearLayout android:gravity="left" android:orientation="vertical" android:layout_width="wrap_content"
+            android:layout_height="fill_parent" android:layout_marginLeft="20.0dip">
+            <TextView android:gravity="center" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/wifi_disconnect_set1" />
+            <View android:layout_width="1.0dip" android:layout_height="30.0dip" android:layout_margin="3.0dip" />
+            <TextView android:gravity="center" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/wifi_disconnect_set2" />
+            <View android:layout_width="1.0dip" android:layout_height="30.0dip" android:layout_margin="3.0dip" />
+            <TextView android:gravity="center" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/wifi_disconnect_set3" />
+        </LinearLayout>
+    </LinearLayout>
+    <TextView android:id="@id/wifi_disconnect_setting" android:background="@color/white" android:paddingLeft="50.0dip" android:paddingTop="@dimen/magin_middle" android:paddingRight="50.0dip"
+        android:paddingBottom="@dimen/magin_middle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/magin_bigger"
+        android:text="@string/wifi_disconnect_setting" />
+</LinearLayout>

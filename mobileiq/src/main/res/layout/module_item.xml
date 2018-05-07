@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:gravity="center"
+    android:background="@drawable/func_icon_item_click_bg"
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:gravity="center"
+        android:orientation="vertical"
+        android:id="@id/ll"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <ImageView
+            android:layout_gravity="center"
+            android:id="@id/iv_module"
+            android:layout_width="65.0dip"
+            android:layout_height="65.0dip"
+            android:src="@mipmap/ic_launcher" />
+        <TextView android:textSize="12.0sp"
+            android:textColor="@color/text_black"
+            android:layout_gravity="center"
+            android:id="@id/tv_module"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4.0dip"
+            android:text="网速测试" />
+    </LinearLayout>
+</RelativeLayout>

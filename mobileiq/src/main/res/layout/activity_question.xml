@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <include android:id="@id/title_bar" android:layout_width="fill_parent" android:layout_height="wrap_content" layout="@layout/app_action_bar_layout" />
+    <LinearLayout android:gravity="center" android:orientation="vertical" android:background="@color/app_bg" android:layout_width="fill_parent" android:layout_height="0.0dip" android:layout_weight="3.0">
+        <RelativeLayout android:layout_width="fill_parent" android:layout_height="0.0dip" android:layout_weight="1.0">
+            <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@mipmap/bg" android:layout_centerInParent="true" />
+            <ImageView android:id="@id/img_scroll" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@mipmap/icon1" android:layout_centerInParent="true" />
+            <ImageView android:id="@id/img_rotate" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@mipmap/icon" android:layout_centerHorizontal="true" android:layout_centerVertical="true" />
+            <TextView android:textColor="@color/white" android:gravity="center" android:id="@id/question_test_content" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="故障排查" android:lines="5" android:layout_alignLeft="@id/img_rotate" android:layout_alignRight="@id/img_rotate" android:layout_centerInParent="true" />
+        </RelativeLayout>
+        <TextView android:textColor="@color/white" android:gravity="center" android:id="@id/question_test_btn" android:background="@drawable/start_test_btn" android:padding="@dimen/magin_small" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="@dimen/magin_big" android:text="开始监测" />
+    </LinearLayout>
+    <LinearLayout android:gravity="center" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="wrap_content">
+        <TextView android:id="@id/question_listview_name" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_margin="@dimen/magin_middle" android:text="测试项" android:layout_weight="1.0" />
+        <TextView android:gravity="center_vertical" android:id="@id/question_listview_device" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="fill_parent" android:layout_margin="@dimen/magin_middle" android:text="本设备测试中" />
+    </LinearLayout>
+    <ListView android:id="@id/question_listview" android:layout_width="fill_parent" android:layout_height="0.0dip" android:layout_margin="@dimen/magin_middle" android:divider="@color/test_record_text" android:layout_weight="2.0" />
+</LinearLayout>

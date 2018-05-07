@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:orientation="horizontal" android:id="@id/manual_item_list_layout" android:padding="@dimen/magin_middle" android:layout_width="fill_parent" android:layout_height="wrap_content">
+        <TextView android:id="@id/manual_item_list_name" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="测试项名称" android:layout_weight="1.0" />
+        <ImageView android:layout_gravity="center_vertical" android:id="@id/manual_item_list_code" android:layout_width="wrap_content" android:layout_height="fill_parent" android:layout_marginRight="15.0dip" android:src="@mipmap/success" />
+        <ImageView android:layout_gravity="center_vertical" android:id="@id/manual_item_list_right" android:layout_width="wrap_content" android:layout_height="fill_parent" android:src="@mipmap/logout_bg" />
+    </LinearLayout>
+    <com.fkty.mobileiq.distribution.ui.MyListview android:visibility="gone" android:id="@id/manual_item_list_listview" android:layout_width="fill_parent" android:layout_height="wrap_content" android:divider="@color/edit_back" android:dividerHeight="1.0dip" />
+</LinearLayout>

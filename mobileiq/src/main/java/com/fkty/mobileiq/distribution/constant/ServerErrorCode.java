@@ -20,7 +20,7 @@ public class ServerErrorCode {
     public static final int ERROR_CODE_SUCCESS = 0;
     public static final int ERROR_CODE_TEST_ALREADY_START = 2;
     public static final int ERROR_CODE_INVALID_PARAMETER = 2;
-    public static final int ERROR_CODE_NOT_READY = 14;
+    public static final int ERROR_CODE_ALREADY_TESTING = 14;
 
 
 }

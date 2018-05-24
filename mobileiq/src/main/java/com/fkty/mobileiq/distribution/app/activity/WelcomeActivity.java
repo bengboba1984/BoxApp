@@ -87,7 +87,8 @@ public class WelcomeActivity extends BaseActivity implements INetNotify {
             Log.d(TAG,"@@@@@@@@@@@@@@@@@@@");
             WebHttpUtils.getInstance().getBoxVersion(GET_BOX_VERSION,this);
         }
-
+//        startActivity(LoginActivity.class);
+//        WelcomeActivity.this.finish();
     }
 
 //    private void checkPermission()

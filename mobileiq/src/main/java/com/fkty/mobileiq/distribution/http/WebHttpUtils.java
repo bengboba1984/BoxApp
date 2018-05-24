@@ -2,8 +2,11 @@ package com.fkty.mobileiq.distribution.http;
 
 import android.util.Log;
 
+import com.fkty.mobileiq.distribution.app.activity.NewQuestionActivity;
 import com.fkty.mobileiq.distribution.bean.TestParamsBean;
 import com.fkty.mobileiq.distribution.constant.CommonField;
+import com.fkty.mobileiq.distribution.constant.OpenTestConstant;
+import com.fkty.mobileiq.distribution.constant.QuestionConstant;
 import com.fkty.mobileiq.distribution.constant.WebServerConstant;
 import com.fkty.mobileiq.distribution.manager.DataManager;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -25,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -98,6 +102,8 @@ public class WebHttpUtils implements Runnable{
             getBoxVersionOnServerTask();
         }else if ("upgrade_box_Version".equals(str)){
             upgradeBoxVersionTask();
+        }else if("upload_result2_plateform".equals(str)){
+            uploadResult2PlateformTask();
         }
 
     }
@@ -182,12 +188,18 @@ public class WebHttpUtils implements Runnable{
     }
     public void stopTestTask(int paramInt)
     {
-        JSONObject localJSONObject = new JSONObject();
-        try
-        {
-            localJSONObject.put("modelType", paramInt);
-            localJSONObject.put("device", DataManager.getInstance().getDevice());
-            OkHttpUtils.postString().id(this.id).url(WebServerConstant.WEB_POST_STOP_TEST).content(localJSONObject.toString()).build().execute(new StringCallback()
+        String param="";
+//        JSONObject localJSONObject = new JSONObject();
+//        try
+//        {
+//            localJSONObject.put("modelType", paramInt);
+//            localJSONObject.put("device", DataManager.getInstance().getDevice());
+            if(this.id== QuestionConstant.TEST_STOP_AND_START || this.id== OpenTestConstant.TEST_STOP_AND_START){
+//                localJSONObject.put("nonblock", 1);
+                param="?nonblock=1";
+            }
+
+            OkHttpUtils.postString().id(this.id).url(WebServerConstant.WEB_POST_STOP_TEST+param).content("").build().execute(new StringCallback()
             {
                 public void onError(Call paramCall, Exception e, int paramInt)
                 {
@@ -204,10 +216,10 @@ public class WebHttpUtils implements Runnable{
                         WebHttpUtils.this.notify.onSuccessNetClient(paramInt, paramString);
                 }
             });
-        }
-        catch (JSONException e){
-            e.printStackTrace();
-        }
+//        }
+//        catch (JSONException e){
+//            e.printStackTrace();
+//        }
     }
     public void startTestTask(List<TestParamsBean> paramList, int modelType)
     {Log.e("startTestTask","startTestTask:modelType="+modelType);
@@ -372,6 +384,7 @@ public class WebHttpUtils implements Runnable{
 
                 public void onResponse(String paramString, int paramInt)
                 {
+                    Log.e("WebHttpUtils","setUrlTask:onResponse="+paramString);
                     if (WebHttpUtils.this.notify != null)
                         WebHttpUtils.this.notify.onSuccessNetClient(paramInt, paramString);
                 }
@@ -804,4 +817,66 @@ public class WebHttpUtils implements Runnable{
     }
 
 
+    public boolean uploadResult2Plateform(INetNotify paramINetNotify, int paramInt) {
+        if (this.thread != null)
+        {
+            if (this.thread.isAlive())
+                return false;
+            this.thread = null;
+        }
+        this.id = paramInt;
+        this.notify = paramINetNotify;
+        this.thread = new Thread(this, "upload_result2_plateform");
+        this.thread.start();
+        return true;
+    }
+
+    public void uploadResult2PlateformTask()
+    {
+        JSONObject pJson= DataManager.getInstance().getUploadResult();
+//        try {
+//            pJson = new JSONObject("{\n" +
+//                    "    \"items\": [\n" +
+//                    "        {\n" +
+//                    "            \"testType\": 1000,\n" +
+//                    "            \"sourceIp\": \"180.173.33.188\",\n" +
+//                    "            \"bandwidth\": 50000000,\n" +
+//                    "            \"account\": \"111111\",\n" +
+//                    "            \"applicationType\": 1,\n" +
+//                    "            \"speedTestType\": \"ENOM\",\n" +
+//                    "            \"errorCode\": 0,\n" +
+//                    "            \"downloadThroughput\": 12177536,\n" +
+//                    "            \"downloadMaxThrought\": 12283776,\n" +
+//                    "            \"uploadThroughput\": 566400,\n" +
+//                    "            \"uploadMaxThroughput\": 679040,\n" +
+//                    "            \"downloadSize\": 5000000,\n" +
+//                    "            \"macAddress\": \"\",\n" +
+//                    "            \"cellName\": \"\"\n" +
+//                    "        }\n" +
+//                    "    ]\n" +
+//                    "}");
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+
+        Log.d("WebHttpUtil","pJson="+pJson.toString());
+        Log.d("WebHttpUtil","url="+DataManager.getInstance().getUrl()+WebServerConstant.REPORT_WEB_TEST_RESULT);
+        OkHttpUtils.postString().mediaType(MediaType.parse("application/json; charset=utf-8")).url(DataManager.getInstance().getUrl()+WebServerConstant.REPORT_WEB_TEST_RESULT).content(pJson.toString()).id(this.id).build().execute(new StringCallback()
+        {
+            public void onError(Call paramCall, Exception e, int paramInt)
+            {
+                Log.e("WebHttpUtil","uploadResult2PlateformTask:onError"+e.getMessage());
+                e.printStackTrace();
+                if (WebHttpUtils.this.notify != null)
+                    WebHttpUtils.this.notify.onErrorNetClient(paramInt, e.getMessage());
+            }
+
+            public void onResponse(String paramString, int paramInt)
+            {
+                Log.d("WebHttpUtil","uploadResult2PlateformTask:onResponse="+paramString);
+                if (WebHttpUtils.this.notify != null)
+                    WebHttpUtils.this.notify.onSuccessNetClient(paramInt, paramString);
+            }
+        });
+    }
 }

@@ -25,5 +25,6 @@ public interface QuestionConstant {
     public static final int TEST_STOP = 22;
     public static final int TEST_STOP_FAILED = 204;
     public static final int TEST_STOP_MSG = 105;
+    public static final int TEST_STOP_AND_START = 106;
     public static final int TEST_STOP_SUCCESS = 203;
 }

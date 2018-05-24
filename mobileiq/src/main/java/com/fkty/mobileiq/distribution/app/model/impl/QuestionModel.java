@@ -152,17 +152,26 @@ public class QuestionModel extends BasicModel
 //                    i=0;//测试，上线后去除
                     if (i == ServerErrorCode.ERROR_CODE_SUCCESS){
                         this.testCallback.onSuccess(TEST_START_SUCCESS, localBundle);
+                    }else if(i==ServerErrorCode.ERROR_CODE_ALREADY_TESTING){
+                        WebHttpUtils.getInstance().stopTest(CommonField.MODLE_TYPE_MALFUNCTION_ELIMINATION, this, TEST_STOP_AND_START);
                     }else{
                         this.testCallback.onFailed(TEST_START_FAILED, localBundle);
                     }
                     break;
                 case TEST_STOP_MSG:
-
                     if (i == ServerErrorCode.ERROR_CODE_SUCCESS){
                         this.testCallback.onSuccess(TEST_STOP_SUCCESS, localBundle);
                     }else{
                         this.testCallback.onFailed(TEST_STOP_FAILED, localBundle);
                     }
+                    break;
+                case TEST_STOP_AND_START:
+                    if (i == ServerErrorCode.ERROR_CODE_SUCCESS){
+                        WebHttpUtils.getInstance().startTest(this.testDataParams, CommonField.MODLE_TYPE_MALFUNCTION_ELIMINATION, this, TEST_START_MSG);
+                    }else{
+                        this.testCallback.onFailed(TEST_START_FAILED, localBundle);
+                    }
+                    break;
             }
         }catch (JSONException e){
             e.printStackTrace();

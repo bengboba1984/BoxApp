@@ -6,6 +6,7 @@ package com.fkty.mobileiq.distribution.constant;
 
 public class WebServerConstant {
 
+    public static final String REPORT_WEB_TEST_RESULT = "/reportWebTestResult";
     public static String HTTP_GET_BOX_VERSION_URL = "http://ngrok.judecumt.win:10010/box/";
     public static String WEB_COMMON = "http://192.168.188.251";//"http://192.168.43.1:19999";//
 //    public static String WEB_COMMON ="http://ngrok.judecumt.win:10023";

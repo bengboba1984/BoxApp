@@ -27,6 +27,9 @@ import com.fkty.mobileiq.distribution.constant.CommonField;
 import com.fkty.mobileiq.distribution.constant.OpenTestConstant;
 import com.fkty.mobileiq.distribution.constant.QuestionConstant;
 import com.fkty.mobileiq.distribution.constant.ServerErrorCode;
+import com.fkty.mobileiq.distribution.http.INetNotify;
+import com.fkty.mobileiq.distribution.http.WebHttpUtils;
+import com.fkty.mobileiq.distribution.json.TestFieldJson;
 import com.fkty.mobileiq.distribution.manager.DataManager;
 import com.fkty.mobileiq.distribution.result.ModelTypeBean;
 import com.fkty.mobileiq.distribution.result.TestResult;
@@ -41,7 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NewQuestionActivity extends BaseActivity
-        implements AdapterView.OnItemClickListener, QuestionConstant, IQuestionView
+        implements AdapterView.OnItemClickListener, QuestionConstant, IQuestionView,INetNotify
 {
     int BTN_STATUS = OpenTestConstant.BTN_START;
     private QuestionListAdapter adapter;
@@ -60,6 +63,7 @@ public class NewQuestionActivity extends BaseActivity
     private List<TestParamsBean> testData;
     private TextView title;
     private ProgressDialog progressBar;
+    private final int UPLOAD_RESULT=1;
 
     public int bindLayout()
     {
@@ -230,6 +234,8 @@ public class NewQuestionActivity extends BaseActivity
                                     if (localJSONObject6.optJSONArray("testResult") != null && localJSONObject6.optJSONArray("testResult").length()>0) {
                                         Log.d(TAG,"onStartSuccess:"+localJSONObject6.optJSONArray("testResult").get(0).toString());
                                         localTestTypeBean2.setResult(localJSONObject6.optJSONArray("testResult").get(0).toString());
+
+                                        TestFieldJson.parseUploadResultField(new JSONObject(localTestTypeBean2.getResult()),localTestTypeBean2.getTestType());
                                     }else{
                                         localTestTypeBean2.setResult("");
                                     }
@@ -262,7 +268,11 @@ public class NewQuestionActivity extends BaseActivity
                                 this.testBtn.setText(getString(R.string.begin_test));
                                 this.testBtn.setTextColor(Color.WHITE);
                                 testingIndex=0;
+                                //调用上传平台
+                                Log.d(TAG,"resultJson="+DataManager.getInstance().getUploadResult());
+                                WebHttpUtils.getInstance().uploadResult2Plateform(this,UPLOAD_RESULT);
                             }
+
                         }
                     }
                 }
@@ -420,5 +430,37 @@ public class NewQuestionActivity extends BaseActivity
         }
         //this.adapter.setData(this.data);
         this.adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onErrorNetClient(int paramInt, String paramString) {
+        Log.d(TAG,"onErrorNetClient:upload 2 web pf failed!!!");
+        DataManager.getInstance().setUploadResult(new JSONObject());
+    }
+
+    @Override
+    public void onFailedNetClient(int paramInt, String paramString) {
+
+    }
+
+    @Override
+    public void onSuccessNetClient(int paramInt, String paramString) {
+        switch (paramInt){
+            default:
+                break;
+            case UPLOAD_RESULT:
+                Log.d(TAG,"onSuccessNetClient:upload 2 web pf success!!!");
+                Log.d(TAG,"onSuccessNetClient:paramString="+paramString);
+                DataManager.getInstance().setUploadResult(new JSONObject());
+                try {
+                    JSONObject rs=new JSONObject(paramString);
+                    if(ServerErrorCode.ERROR_CODE_SUCCESS==rs.optInt("errorCode")){
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
+        }
     }
 }

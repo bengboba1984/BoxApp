@@ -41,13 +41,28 @@ public class DataManager {
     private List<TestShowFieldBean> pingField = new ArrayList();
     private List<TestShowFieldBean> speedField = new ArrayList();
 
+    private List<TestShowFieldBean> dnsUploadField = new ArrayList();
+    private List<TestShowFieldBean> traceUploadField = new ArrayList();
+    private List<TestShowFieldBean> httpUploadField = new ArrayList();
+    private List<TestShowFieldBean> pingUploadField = new ArrayList();
+    private List<TestShowFieldBean> speedUploadField = new ArrayList();
 
+    private JSONObject uploadResult=new JSONObject();
+
+    public JSONObject getUploadResult() {
+        return uploadResult;
+    }
+
+    public void setUploadResult(JSONObject uploadResult) {
+        this.uploadResult = uploadResult;
+    }
 
     public static DataManager getInstance()
     {
         if (dataManager == null){
             dataManager = new DataManager();
             dataManager.initialField();
+            dataManager.initialUploadFields();
         }
         return dataManager;
     }
@@ -88,6 +103,52 @@ public class DataManager {
 
     }
 
+    private void initialUploadFields(){
+        pingUploadField.add(new TestShowFieldBean("avgDelay",true,"平均时延",0,"string","毫秒"));
+        pingUploadField.add(new TestShowFieldBean("avgJitter",true,"平均抖动",0,"string","毫秒"));
+        pingUploadField.add(new TestShowFieldBean("hostIp",true,"主机IP",0,"string",""));
+        pingUploadField.add(new TestShowFieldBean("hostIpv4",true,"主机Ipv4",0,"string",""));
+        pingUploadField.add(new TestShowFieldBean("lossPackets",true,"丢包数",0,"int",""));
+        pingUploadField.add(new TestShowFieldBean("lossPercent",true,"丢包率",0,"string","%"));
+        pingUploadField.add(new TestShowFieldBean("maxDelay",true,"最大时延",0,"string",""));
+        pingUploadField.add(new TestShowFieldBean("maxJitter",true,"最大抖动",0,"string",""));
+        pingUploadField.add(new TestShowFieldBean("minDelay",true,"最小时延",0,"string",""));
+        pingUploadField.add(new TestShowFieldBean("minJitter",true,"最小抖动",0,"string",""));
+        pingUploadField.add(new TestShowFieldBean("oooPackets",true,"乱序数",0,"string",""));
+        pingUploadField.add(new TestShowFieldBean("resolveTime",true,"解析时间",0,"string",""));
+        pingUploadField.add(new TestShowFieldBean("sendPackets",true,"发包数",0,"string",""));
+        pingUploadField.add(new TestShowFieldBean("stdDelay",true,"STD时延",0,"string",""));
+        pingUploadField.add(new TestShowFieldBean("stdJitter",true,"STD抖动",0,"string",""));
+
+        traceUploadField.add(new TestShowFieldBean("avgDelay",true,"平均时延",0,"string","毫秒"));
+        traceUploadField.add(new TestShowFieldBean("avgJitter",true,"平均抖动",0,"string","毫秒"));
+        traceUploadField.add(new TestShowFieldBean("hostIp",true,"主机IP",0,"string",""));
+        traceUploadField.add(new TestShowFieldBean("lossPercent",true,"丢包率",0,"int","%"));
+        traceUploadField.add(new TestShowFieldBean("hopCount",true,"路由跳数",0,"int",""));
+
+        httpUploadField.add(new TestShowFieldBean("connectTime",true,"连接时间",0,"int","毫秒"));
+        httpUploadField.add(new TestShowFieldBean("firstByteTime",true,"首字节时间",0,"int","毫秒"));
+        httpUploadField.add(new TestShowFieldBean("hostIp",true,"主机IP",0,"string",""));
+        httpUploadField.add(new TestShowFieldBean("firstPageTime",true,"首页加载时间",0,"int","毫秒"));
+        httpUploadField.add(new TestShowFieldBean("meanQuality",true,"综合质量",0,"int",""));
+        httpUploadField.add(new TestShowFieldBean("pageLoadTime",true,"页面加载时间",0,"int","毫秒"));
+        httpUploadField.add(new TestShowFieldBean("resolveTime",true,"解析时间",0,"int","毫秒"));
+        httpUploadField.add(new TestShowFieldBean("responseCode",true,"响应码",0,"int",""));
+        httpUploadField.add(new TestShowFieldBean("throughput",true,"吞吐率",0,"int","Byte/S"));
+
+        dnsUploadField.add(new TestShowFieldBean("avgReplyTime",true,"平均响应时间",0,"string","毫秒"));
+        dnsUploadField.add(new TestShowFieldBean("numberOfAnswers",true,"记录数",0,"int",""));
+        dnsUploadField.add(new TestShowFieldBean("resolveTime",true,"解析时间",0,"string","毫秒"));
+        dnsUploadField.add(new TestShowFieldBean("responseCode",true,"响应码",0,"int",""));
+        dnsUploadField.add(new TestShowFieldBean("successPercent",true,"成功率",0,"int","%"));
+
+        speedUploadField.add(new TestShowFieldBean("customerIp",true,"测速客户端IP",0,"string",""));
+        speedUploadField.add(new TestShowFieldBean("downloadMaxThroughput",true,"下载峰值速率",0,"int","Mbps"));
+        speedUploadField.add(new TestShowFieldBean("downloadThroughput",true,"下载平均速率",0,"int","Mbps"));
+        speedUploadField.add(new TestShowFieldBean("uploadMaxThroughput",true,"上传峰值速率",0,"int","Mbps"));
+        speedUploadField.add(new TestShowFieldBean("uploadThroughput",true,"上传平均速率",0,"int","Mbps"));
+
+    }
     public JSONObject getAllInfo()
     {
         JSONObject localJSONObject1 = new JSONObject();

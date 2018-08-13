@@ -226,6 +226,11 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
                     startActivity(CustomActivity.class);
                     break;
                 }
+                if(DataManager.getInstance().getOpenData()==null || DataManager.getInstance().getOpenData().size()<1){
+                    showToast(getString(R.string.url_null));
+                    startActivity(SettingActivity.class);
+                    break;
+                }
                 startActivity(NewOpenTestActivity.class);
                 break;
             case R.id.questionTest:
@@ -236,6 +241,11 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
                 if ((DataManager.getInstance().getAccount() == null) || (DataManager.getInstance().getAccount().length() < 1)){
                     showToast(getString(R.string.account_null));
                     startActivity(CustomActivity.class);
+                    break;
+                }
+                if(DataManager.getInstance().getTroubleData()==null || DataManager.getInstance().getTroubleData().size()<1){
+                    showToast(getString(R.string.url_null));
+                    startActivity(SettingActivity.class);
                     break;
                 }
                 startActivity(NewQuestionActivity.class);
@@ -251,13 +261,18 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
                     startActivity(CustomActivity.class);
                     break;
                 }
+                if(DataManager.getInstance().getManualData()==null || DataManager.getInstance().getManualData().size()<1){
+                    showToast(getString(R.string.url_null));
+                    startActivity(SettingActivity.class);
+                    break;
+                }
                 startActivity(ManualActivity.class);
                 break;
             case R.id.networkTest:
-//                if (!MWifiManager.getIntance().isConnect()){
-//                    showToast(getString(R.string.wifi_disconnect_tip));
-//                    break;
-//                }
+                if (!MWifiManager.getIntance().isWifiConnect()){
+                    showToast(getString(R.string.wifi_disconnect_tip1));
+                    break;
+                }
 //                Log.d(TAG,"++++++++++++++++++"+DataManager.getInstance().getAccount());
                 if ((DataManager.getInstance().getAccount() == null) || (DataManager.getInstance().getAccount().length() < 1)){
                     showToast(getString(R.string.account_null));
@@ -267,10 +282,10 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
                 startActivity(NetworkActivity.class);
                 break;
             case R.id.videoTest:
-//                if (!MWifiManager.getIntance().isConnect()){
-//                    showToast(getString(R.string.wifi_disconnect_tip));
-//                    break;
-//                }
+                if (!MWifiManager.getIntance().isConnect()){
+                    showToast(getString(R.string.wifi_disconnect_tip));
+                    break;
+                }
 //                Log.d(TAG,"++++++++++++++++++"+DataManager.getInstance().getAccount());
                 if ((DataManager.getInstance().getAccount() == null) || (DataManager.getInstance().getAccount().length() < 1)){
                     showToast(getString(R.string.account_null));

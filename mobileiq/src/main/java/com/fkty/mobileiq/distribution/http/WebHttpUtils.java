@@ -560,7 +560,7 @@ public class WebHttpUtils implements Runnable{
         }
     }
 
-    public boolean setAccount(INetNotify paramINetNotify, int paramInt, String paramString)
+    public boolean setAccount(INetNotify paramINetNotify, int paramInt, String strAccount)
     {
         if (this.thread != null)
         {
@@ -568,7 +568,7 @@ public class WebHttpUtils implements Runnable{
                 return false;
             this.thread = null;
         }
-        this.account = paramString;
+        this.account = strAccount;
         this.id = paramInt;
         this.notify = paramINetNotify;
         this.thread = new Thread(this, "set_account");

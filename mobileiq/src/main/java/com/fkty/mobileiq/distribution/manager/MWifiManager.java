@@ -1,12 +1,18 @@
 package com.fkty.mobileiq.distribution.manager;
 
 import android.content.Context;
+import android.content.SyncStatusObserver;
+import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.util.Log;
 
+import com.fkty.mobileiq.distribution.DistributedMobileIQApplication;
 import com.fkty.mobileiq.distribution.common.SystemManager;
 
 import java.util.Iterator;
@@ -32,9 +38,40 @@ public class MWifiManager {
 
         return connect2Wifi;
     }
+
+    private boolean isNetworkConnected(){
+        Context context=DistributedMobileIQApplication.getInstance();
+        if(context!=null){
+            ConnectivityManager cm= (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            System.out.println("step1:Build.VERSION.SDK_INT ="+Build.VERSION.SDK_INT );
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                System.out.println("step2");
+                NetworkCapabilities nc = cm.getNetworkCapabilities(cm.getActiveNetwork());
+                return nc.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
+            }else{
+                NetworkInfo info= cm.getActiveNetworkInfo();
+                System.out.println("step3：info.getType()="+info.getType());
+                if(info!=null && info.getType()==ConnectivityManager.TYPE_WIFI){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
     public boolean isConnect()
     {
-//        return true;
+        if(this.mWifiManager.getConnectionInfo().getSSID().contains(WIFI_NAME)){
+            return isNetworkConnected();
+        }else{
+            return false;
+        }
+    }
+
+    public boolean isWifiConnect()
+    {
         return this.mWifiManager.getConnectionInfo().getSSID().contains(WIFI_NAME);
     }
 
@@ -141,4 +178,5 @@ public class MWifiManager {
         }
         return null;
     }
+
 }

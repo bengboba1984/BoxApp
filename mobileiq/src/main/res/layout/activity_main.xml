@@ -9,7 +9,7 @@
         android:visibility="gone"
         android:layout_width="fill_parent"
         android:layout_height="20.0dip"
-        android:text="当前未连接盒子wifi" />
+        android:text="当前未连接盒子wifi或未联网" />
     <RelativeLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
@@ -63,9 +63,19 @@
         android:layout_height="0.0dip"
         android:layout_weight="3.0">
         <LinearLayout android:orientation="horizontal" android:background="@color/gray_bg" android:paddingLeft="@dimen/main_padding" android:paddingTop="@dimen/main_padding" android:paddingRight="@dimen/main_padding" android:layout_width="fill_parent" android:layout_height="0.0dip" android:layout_weight="1.0">
+            <com.fkty.mobileiq.distribution.view.CustomView
+                android:id="@id/settingOTT"
+                android:padding="@dimen/main_padding"
+                android:layout_width="0.0dip"
+                android:layout_height="fill_parent"
+                android:layout_weight="1.0" />
             <com.fkty.mobileiq.distribution.view.CustomView android:id="@id/setting" android:padding="@dimen/main_padding" android:layout_width="0.0dip" android:layout_height="fill_parent" android:layout_weight="1.0" />
-            <com.fkty.mobileiq.distribution.view.CustomView android:id="@id/questionTest" android:padding="@dimen/main_padding" android:layout_width="0.0dip" android:layout_height="fill_parent" android:layout_weight="1.0" />
-            <com.fkty.mobileiq.distribution.view.CustomView android:id="@id/openTest" android:padding="@dimen/main_padding" android:layout_width="0.0dip" android:layout_height="fill_parent" android:layout_weight="1.0" />
+            <com.fkty.mobileiq.distribution.view.CustomView
+                android:id="@id/userInfo"
+                android:layout_width="0.0dip"
+                android:layout_height="fill_parent"
+                android:layout_weight="1.0"
+                android:padding="@dimen/main_padding" />
         </LinearLayout>
         <LinearLayout
             android:orientation="horizontal"
@@ -76,20 +86,10 @@
             android:layout_width="fill_parent"
             android:layout_height="0.0dip"
             android:layout_weight="1.0">
-            <com.fkty.mobileiq.distribution.view.CustomView
-                android:id="@id/settingOTT"
-                android:padding="@dimen/main_padding"
-                android:layout_width="0.0dip"
-                android:layout_height="fill_parent"
-                android:layout_weight="1.0" />
+            <com.fkty.mobileiq.distribution.view.CustomView android:id="@id/openTest" android:padding="@dimen/main_padding" android:layout_width="0.0dip" android:layout_height="fill_parent" android:layout_weight="1.0" />
+            <com.fkty.mobileiq.distribution.view.CustomView android:id="@id/questionTest" android:padding="@dimen/main_padding" android:layout_width="0.0dip" android:layout_height="fill_parent" android:layout_weight="1.0" />
             <com.fkty.mobileiq.distribution.view.CustomView
                 android:id="@id/manualTest"
-                android:padding="@dimen/main_padding"
-                android:layout_width="0.0dip"
-                android:layout_height="fill_parent"
-                android:layout_weight="1.0" />
-            <com.fkty.mobileiq.distribution.view.CustomView
-                android:id="@id/networkTest"
                 android:padding="@dimen/main_padding"
                 android:layout_width="0.0dip"
                 android:layout_height="fill_parent"
@@ -103,23 +103,20 @@
             android:background="@color/gray_bg"
             android:orientation="horizontal"
             android:padding="@dimen/main_padding">
-
             <com.fkty.mobileiq.distribution.view.CustomView
-                android:id="@id/userInfo"
+                android:id="@id/networkTest"
+                android:padding="@dimen/main_padding"
                 android:layout_width="0.0dip"
                 android:layout_height="fill_parent"
-                android:layout_weight="1.0"
-                android:padding="@dimen/main_padding" />
-
-            <com.fkty.mobileiq.distribution.view.CustomView
-                android:id="@id/testRecode"
-                android:layout_width="0.0dip"
-                android:layout_height="fill_parent"
-                android:layout_weight="1.0"
-                android:padding="@dimen/main_padding" />
-
+                android:layout_weight="1.0" />
             <com.fkty.mobileiq.distribution.view.CustomView
                 android:id="@id/videoTest"
+                android:layout_width="0.0dip"
+                android:layout_height="fill_parent"
+                android:layout_weight="1.0"
+                android:padding="@dimen/main_padding" />
+            <com.fkty.mobileiq.distribution.view.CustomView
+                android:id="@id/testRecode"
                 android:layout_width="0.0dip"
                 android:layout_height="fill_parent"
                 android:layout_weight="1.0"

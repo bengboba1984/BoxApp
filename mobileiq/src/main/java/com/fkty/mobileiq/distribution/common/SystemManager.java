@@ -1,6 +1,8 @@
 package com.fkty.mobileiq.distribution.common;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
@@ -125,4 +127,5 @@ public class SystemManager {
         this.wifiList = this.wifiManager.getScanResults();
         this.wifiConfigurations = this.wifiManager.getConfiguredNetworks();
     }
+
 }

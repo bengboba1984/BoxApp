@@ -3,12 +3,15 @@ package com.fkty.mobileiq.distribution.app.activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,10 +64,17 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
     private final int CAPTURE_READY = 1;
     private Button deleteBtn;
     private ProgressDialog uploadProgressBar;
+    private TextView captureTime;
+    private LinearLayout fileLayout;
 
     public void onStartFailed(int paramInt, Bundle paramBundle) {
         this.status=CAPTURE_READY;
         this.captureBtn.setText(R.string.start_capture);
+        this.captureBtn.setTextColor(Color.WHITE);
+        countHandler.removeCallbacks(runnable);
+        if(this.fileLayout.getVisibility()==View.VISIBLE){
+            this.fileLayout.setVisibility(View.GONE);
+        }
         showToast("开始抓包失败");
         //判断失败原因
     }
@@ -79,6 +89,12 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
         showToast("抓包失败！！");
         if (this.progressBar.isShowing())
             this.progressBar.dismiss();
+        this.captureBtn.setText(R.string.start_capture);
+        this.captureBtn.setTextColor(Color.WHITE);
+        countHandler.removeCallbacks(runnable);
+        if(this.fileLayout.getVisibility()==View.VISIBLE){
+            this.fileLayout.setVisibility(View.GONE);
+        }
     }
 
     public void onStopSuccess(int paramInt, String paramString) {
@@ -102,6 +118,11 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
         if (this.progressBar.isShowing())
             this.progressBar.dismiss();
         this.captureBtn.setText(R.string.start_capture);
+        this.captureBtn.setTextColor(Color.WHITE);
+        countHandler.removeCallbacks(runnable);
+        if(this.fileLayout.getVisibility()==View.VISIBLE){
+            this.fileLayout.setVisibility(View.GONE);
+        }
         initFileList();
     }
 
@@ -126,7 +147,8 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
         this.backImg = paramView.findViewById(R.id.vixtel_btn_back);
         this.selectorAll = paramView.findViewById(R.id.network_selector_all);
         this.listView = paramView.findViewById(R.id.network_list);
-
+        this.fileLayout=paramView.findViewById(R.id.capture_file);
+        this.captureTime=paramView.findViewById(R.id.capture_time);
         this.captureBtn = paramView.findViewById(R.id.start_capture);
         this.uploadBtn = paramView.findViewById(R.id.upload_capture);
         this.deleteBtn = paramView.findViewById(R.id.delete_captrue_file);
@@ -241,7 +263,6 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
                 deleteFiles();
                 break;
             case R.id.upload_capture:
-                Log.d(TAG,"dddddd");
                 uploadCaptureFiles();
                 break;
             default:
@@ -375,8 +396,44 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
         Toast.makeText(this, "开始测试，点击结束查看结果", Toast.LENGTH_SHORT).show();
         long l2 = System.currentTimeMillis();
         int j = (int)(1000.0D * Math.random());
-        String fn= DataManager.getInstance().getAccount()+"_"+l2+j;
+        String fn= DataManager.getInstance().getStbID()+"_"+l2+j;
         this.presenter.start(fn);
         this.captureBtn.setText(R.string.stop_capture);
+        this.captureBtn.setText(R.string.stop_capture);
+        this.captureBtn.setTextColor(Color.RED);
+        this.fileLayout.setVisibility(View.VISIBLE);
+        captureTime.setText("");
+        countHandler.postDelayed(runnable,1000);
+    }
+
+    Handler countHandler=new Handler();
+    Runnable runnable=new Runnable() {
+        @Override
+        public void run() {
+            String ct= String.valueOf(captureTime.getText());
+            if(ct==null || "".equals(ct)){
+                captureTime.setText("00:00");
+            }else{
+                String mm=ct.split(":")[0];
+                String ss=ct.split(":")[1];
+                if("59".equals(ss)){
+                    mm=String.valueOf(Integer.valueOf(mm).intValue()+1);
+                    ss="00";
+                }else{
+                    ss=String.valueOf(Integer.valueOf(ss).intValue()+1);
+                    if(ss.length()==1){
+                        ss="0"+ss;
+                    }
+                }
+                captureTime.setText(mm+":"+ss);
+            }
+            countHandler.postDelayed(this,1000);
+        }
+    };
+
+    @Override
+    protected void onDestroy() {
+        countHandler.removeCallbacks(runnable);
+        super.onDestroy();
     }
 }

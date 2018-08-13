@@ -123,4 +123,7 @@
     <item name="user_unit" type="id">121</item>
     <item name="logout" type="id">122</item>
     <item name="videoTest" type="id">123</item>
+    <item name="custom_layout2" type="id">124</item>
+    <item name="stb_id_key" type="id">125</item>
+    <item name="stb_id" type="id">126</item>
 </resources>

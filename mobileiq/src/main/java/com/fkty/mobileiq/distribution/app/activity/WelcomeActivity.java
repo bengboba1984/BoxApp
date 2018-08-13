@@ -26,6 +26,7 @@ import com.fkty.mobileiq.distribution.http.HttpUtil;
 import com.fkty.mobileiq.distribution.http.INetNotify;
 import com.fkty.mobileiq.distribution.http.WebHttpUtils;
 import com.fkty.mobileiq.distribution.json.MainJsonUtil;
+import com.fkty.mobileiq.distribution.manager.DataManager;
 import com.fkty.mobileiq.distribution.manager.MWifiManager;
 import com.fkty.mobileiq.distribution.manager.PermissionManager;
 
@@ -73,22 +74,23 @@ public class WelcomeActivity extends BaseActivity implements INetNotify {
 //                SystemManager.getInstance().openWifi();
 ////                WelcomeActivity.this.bundle.putBoolean("isSuccess", true);
 //            }
-
+//            startActivity(LoginActivity.class);
+//            WelcomeActivity.this.finish();
             upgradeBoxVersion();
         }
     };
     private void upgradeBoxVersion(){
-        Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@@");
-        if (!MWifiManager.getIntance().isConnect()){
-            Toast.makeText(this, getString(R.string.wifi_disconnect_4upgrade), Toast.LENGTH_LONG).show();
-            startActivity(LoginActivity.class);
-            WelcomeActivity.this.finish();
-        }else{
-            Log.d(TAG,"@@@@@@@@@@@@@@@@@@@");
-            WebHttpUtils.getInstance().getBoxVersion(GET_BOX_VERSION,this);
-        }
-//        startActivity(LoginActivity.class);
-//        WelcomeActivity.this.finish();
+//        Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@@ 盒子更新版本");
+//        if (!MWifiManager.getIntance().isConnect()){
+//            Toast.makeText(this, getString(R.string.wifi_disconnect_4upgrade), Toast.LENGTH_LONG).show();
+//            startActivity(LoginActivity.class);
+//            WelcomeActivity.this.finish();
+//        }else{
+//            Log.d(TAG,"@@@@@@@@@@@@@@@@@@@");
+//            WebHttpUtils.getInstance().getBoxVersion(GET_BOX_VERSION,this);
+//        }
+        startActivity(LoginActivity.class);
+        WelcomeActivity.this.finish();
     }
 
 //    private void checkPermission()
@@ -160,7 +162,33 @@ public class WelcomeActivity extends BaseActivity implements INetNotify {
 
     @Override
     public void onErrorNetClient(int paramInt, String paramString) {
+        switch (paramInt){
+            case GET_FOREGIN_SERVER:
+                Log.d(this.getClass().getName(),"onErrorNetClient======/"+paramString);
+                Message localMessage = Message.obtain();
+                localMessage.what = -1;
+                localMessage.obj = paramString;
+                this.handler.sendMessage(localMessage);
+                break;
+            case GET_BOX_VERSION:
 
+                startActivity(LoginActivity.class);
+                WelcomeActivity.this.finish();
+                break;
+            case UPGRAD_BOX_VERSION:
+                Log.d(TAG,"UPGRAD_BOX_VERSION:onErrorNetClient");
+                if (this.progressBar.isShowing())
+                    this.progressBar.dismiss();
+                startActivity(LoginActivity.class);
+                WelcomeActivity.this.finish();
+                break;
+            case GET_BOX_VERSION_ON_SERVER:
+                if (this.progressBar.isShowing())
+                    this.progressBar.dismiss();
+                startActivity(LoginActivity.class);
+                WelcomeActivity.this.finish();
+                break;
+        }
     }
 
     @Override
@@ -304,6 +332,8 @@ public class WelcomeActivity extends BaseActivity implements INetNotify {
 
     protected void onResume()
     {
+        startActivity(LoginActivity.class);
+        WelcomeActivity.this.finish();
         super.onResume();
 
     }
@@ -323,7 +353,9 @@ public class WelcomeActivity extends BaseActivity implements INetNotify {
     @Override
     protected void onCreate(Bundle paramBundle) {
         HttpUtil.getInstance().getForeginServer(GET_FOREGIN_SERVER, this);
-
+        String str2 ="http://211.136.99.12:4100";
+        DataManager.getInstance().setUrl(str2);
+        upgradeBoxVersion();
         super.onCreate(paramBundle);
     }
 }

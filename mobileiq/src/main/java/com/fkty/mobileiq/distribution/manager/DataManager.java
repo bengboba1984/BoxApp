@@ -19,6 +19,7 @@ public class DataManager {
     private static DataManager dataManager;
     private String url;
     private String account;
+    private String stbID;
     private String cpu;
     private String hardDisk;
     private String deviceSeq;
@@ -83,8 +84,8 @@ public class DataManager {
         httpField.add(new TestShowFieldBean("firstByteTime",true,"首字节时间",0,"int","毫秒"));
         httpField.add(new TestShowFieldBean("hostIp",true,"主机IP",0,"string",""));
         httpField.add(new TestShowFieldBean("firstPageTime",true,"首页加载时间",0,"int","毫秒"));
-        httpField.add(new TestShowFieldBean("meanQuality",true,"综合质量",0,"int",""));
-        httpField.add(new TestShowFieldBean("pageLoadTime",true,"页面加载时间",0,"int","毫秒"));
+//        httpField.add(new TestShowFieldBean("meanQuality",true,"综合质量",0,"int",""));
+//        httpField.add(new TestShowFieldBean("pageLoadTime",true,"页面加载时间",0,"int","毫秒"));
         httpField.add(new TestShowFieldBean("resolveTime",true,"解析时间",0,"int","毫秒"));
         httpField.add(new TestShowFieldBean("responseCode",true,"响应码",0,"int",""));
         httpField.add(new TestShowFieldBean("throughput",true,"吞吐率",0,"int","Byte/S"));
@@ -92,7 +93,7 @@ public class DataManager {
         dnsField.add(new TestShowFieldBean("avgReplyTime",true,"平均响应时间",0,"string","毫秒"));
         dnsField.add(new TestShowFieldBean("numberOfAnswers",true,"记录数",0,"int",""));
         dnsField.add(new TestShowFieldBean("resolveTime",true,"解析时间",0,"string","毫秒"));
-        dnsField.add(new TestShowFieldBean("responseCode",true,"响应码",0,"int",""));
+//        dnsField.add(new TestShowFieldBean("responseCode",true,"响应码",0,"int",""));
         dnsField.add(new TestShowFieldBean("successPercent",true,"成功率",0,"int","%"));
 
         speedField.add(new TestShowFieldBean("customerIp",true,"测速客户端IP",0,"string",""));
@@ -171,6 +172,14 @@ public class DataManager {
             e.printStackTrace();
         }
         return localJSONObject1;
+    }
+
+    public String getStbID() {
+        return stbID;
+    }
+
+    public void setStbID(String stbID) {
+        this.stbID = stbID;
     }
 
     public String getOotConnectType() {

@@ -9,10 +9,10 @@
     <string name="main_title4test">宽带装维助手</string>
     <string name="setting">设置</string>
     <string name="settingOTT">配置盒子</string>
-    <string name="questionTest">故障排查</string>
+    <string name="questionTest">排障测试</string>
     <string name="openTest">开通测试</string>
     <string name="manualTest">手动测试</string>
-    <string name="networkTest">断网测试</string>
+    <string name="networkTest">宽带抓包</string>
     <string name="userInfo">用户信息</string>
     <string name="testRecode">测试记录</string>
     <string name="ok">确定</string>
@@ -32,7 +32,8 @@
     <string name="wifi_disconnect_set2">等待Wifi连接成功</string>
     <string name="wifi_disconnect_set3">回到APP，即可完成与盒子的联网</string>
     <string name="wifi_disconnect_setting">看懂了，去设置</string>
-    <string name="wifi_disconnect_tip">当前未连接盒子热点，请通过上方提示入口，连接盒子热点</string>
+    <string name="wifi_disconnect_tip">当前未连接盒子热点或未能联网，请通过上方提示入口，连接盒子热点</string>
+    <string name="wifi_disconnect_tip1">当前未连接盒子热点，请通过上方提示入口，连接盒子热点</string>
     <string name="ott_setting_device_cpu">CPU使用率</string>
     <string name="ott_setting_device_harddisk">磁盘使用率</string>
     <string name="ott_setting_device_memory">内存使用率</string>
@@ -69,7 +70,8 @@
     <string name="stop_capture">停止抓包</string>
     <string name="delete_captrue_file">一键删除</string>
     <string name="logout">退出登录</string>
-    <string name="videoTest">视频测试</string>
+    <string name="videoTest">互动抓包</string>
     <string name="wifi_disconnect_4upgrade">当前未连接盒子热点，无法升级固件</string>
+    <string name="url_null">请先设置URL</string>
 
 </resources>

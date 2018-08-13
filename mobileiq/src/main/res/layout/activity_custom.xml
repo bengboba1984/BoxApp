@@ -4,9 +4,20 @@
     <include android:id="@id/title_bar" android:layout_width="fill_parent" android:layout_height="wrap_content" layout="@layout/app_action_bar_layout" />
     <LinearLayout android:id="@id/custom_layout" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_margin="@dimen/magin_big">
         <TextView android:id="@id/custom_key" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="@dimen/magin_middle" android:text="宽带账号" />
-
         <EditText
             android:id="@id/custom_account"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/magin_big"
+            android:layout_marginRight="@dimen/magin_big"
+            android:background="@null"
+            android:gravity="right" />
+    </LinearLayout>
+    <View style="@style/underline" />
+    <LinearLayout android:id="@id/custom_layout2" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_margin="@dimen/magin_big">
+        <TextView android:id="@id/stb_id_key" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="@dimen/magin_middle" android:text="STB ID" />
+        <EditText
+            android:id="@id/stb_id"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/magin_big"

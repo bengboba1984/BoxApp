@@ -234,7 +234,7 @@ public class NewQuestionActivity extends BaseActivity
                                     if (localJSONObject6.optJSONArray("testResult") != null && localJSONObject6.optJSONArray("testResult").length()>0) {
                                         Log.d(TAG,"onStartSuccess:"+localJSONObject6.optJSONArray("testResult").get(0).toString());
                                         localTestTypeBean2.setResult(localJSONObject6.optJSONArray("testResult").get(0).toString());
-
+                                        //测试数据塞入DataManager
                                         TestFieldJson.parseUploadResultField(new JSONObject(localTestTypeBean2.getResult()),localTestTypeBean2.getTestType());
                                     }else{
                                         localTestTypeBean2.setResult("");

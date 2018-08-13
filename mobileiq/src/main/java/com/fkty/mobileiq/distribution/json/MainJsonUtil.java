@@ -114,9 +114,7 @@ public class MainJsonUtil {
                             JSONObject localJSONObject3 = new JSONObject(str1);
                             if (localJSONObject3.has("foreignServerUrl"))
                             {
-                                String str2 = localJSONObject3.optString("foreignServerUrl");
-                                str2="http://211.136.99.12:4100";
-                                DataManager.getInstance().setUrl(str2);
+
                             }
                         }
                     }

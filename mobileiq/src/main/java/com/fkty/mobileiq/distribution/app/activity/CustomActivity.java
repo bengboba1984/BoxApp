@@ -22,6 +22,7 @@ import com.fkty.mobileiq.distribution.manager.DataManager;
 public class CustomActivity extends BaseActivity implements INetNotify {
     private final int SET_ACCOUNT_ID = 1;
     private EditText account;
+    private EditText stbID;
     private ImageView backImg;
     private Button btn;
     private ProgressDialog progressBar;
@@ -49,6 +50,8 @@ public class CustomActivity extends BaseActivity implements INetNotify {
         this.btn = paramView.findViewById(R.id.custom_sure);
         this.account = paramView.findViewById(R.id.custom_account);
         this.account.setOnClickListener(this);
+        this.stbID = paramView.findViewById(R.id.stb_id);
+        this.stbID.setOnClickListener(this);
     }
 
     @Override
@@ -110,16 +113,22 @@ public class CustomActivity extends BaseActivity implements INetNotify {
                 finish();
                 break;
             case R.id.custom_sure:
-                String str = this.account.getText().toString().trim();
-                if ((str == null) || (str.length() < 1))
+                String strAccount = this.account.getText().toString().trim();
+                String strSTB = this.stbID.getText().toString().trim();
+
+                if (((strAccount == null) || (strAccount.length() < 1)) && ((strSTB == null) || (strSTB.length() < 1)))
                 {
-                    showToast("宽带账号不能设置为空");
+                    showToast("宽带账号/STB ID 不能都设置为空");
                     break;
                 }
-                this.progressBar.setMessage("设置宽带账号");
+                if ((strSTB != null) && (strSTB.length() >= 1))
+                {
+                    DataManager.getInstance().setStbID(strSTB);
+                }
+                this.progressBar.setMessage("设置宽带账号/STB");
                 if (this.progressBar.isShowing())
                     this.progressBar.show();
-                WebHttpUtils.getInstance().setAccount(this, SET_ACCOUNT_ID, str);
+                WebHttpUtils.getInstance().setAccount(this, SET_ACCOUNT_ID, strAccount);
                 break;
             case R.id.custom_account:
                 if (CommonField.PPPOE.equals(DataManager.getInstance().getOotConnectType())){

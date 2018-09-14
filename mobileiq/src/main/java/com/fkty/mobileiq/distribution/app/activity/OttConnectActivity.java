@@ -30,9 +30,12 @@ public class OttConnectActivity extends BaseActivity
 {
     private final long CONNECT_TIMEOUT = 30000L;
     private final int GET_SET_BRIDGE = 4;
+    private final int GET_SET_BRIDGE_OFF = 5;
     private final int GET_SET_DHCP = 3;
     private final int GET_SET_PPPOE = 1;
     private final int GET_SET_STATIC = 2;
+    private final int BRIDGE_ON = 1;
+    private final int BRIDGE_OFF = 0;
     private ImageView backImg;
     private Button commit;
     private String connectType;
@@ -193,6 +196,9 @@ public class OttConnectActivity extends BaseActivity
             case GET_SET_BRIDGE:
                 showToast("设置桥接错误,错误信息：" + paramString);
                 break;
+            case GET_SET_BRIDGE_OFF:
+                showToast("关闭桥接错误,错误信息：" + paramString);
+                break;
         }
     }
 
@@ -207,7 +213,8 @@ public class OttConnectActivity extends BaseActivity
         }
         if(paramString!=null && paramString.length()>0){
             try {
-
+                Log.d(TAG,"paramString="+paramString.substring(paramString.indexOf("{",0),paramString.lastIndexOf("}")+1));
+                paramString=paramString.substring(paramString.indexOf("{",0),paramString.lastIndexOf("}")+1);
                 JSONObject localJSONObject1 = new JSONObject(paramString);
                 String str = localJSONObject1.optString("state");
                 int i=-1;
@@ -237,6 +244,44 @@ public class OttConnectActivity extends BaseActivity
                                 break;
                             case GET_SET_BRIDGE:
                                 showToast("设置成功");
+                                break;
+                            case GET_SET_BRIDGE_OFF:
+                                DataManager.getInstance().setOotConnectType(this.connectType);
+                                if((CommonField.PPPOE).equals(this.connectType)){
+                                    this.progressBar.setMessage("设置PPPOE");
+                                    this.ppoePwdString = this.pppoePwdView.getEditText();
+                                    this.ppoeUserString = this.pppoeUserView.getEditText();
+                                    if ((this.ppoePwdString != null) && (this.ppoePwdString.length() > 0) && (this.ppoeUserString != null) && (this.ppoeUserString.length() > 0)){
+                                        if (!this.progressBar.isShowing()){
+                                            this.progressBar.show();
+                                        }
+                                        WebHttpUtils.getInstance().setPPPoe(this.ppoeUserString, this.ppoePwdString, this, GET_SET_PPPOE);
+                                    }else{
+                                        showToast("用户名或密码不能为空");
+                                    }
+                                }else if((CommonField.STATICIP).equals(this.connectType)){
+                                    this.staticIpString = this.staticIPView.getEditText();
+                                    this.staticSubnetString = this.staticSubnetView.getEditText();
+                                    this.staticGateString = this.staticGateView.getEditText();
+                                    this.staticDnsString = this.staticDnsView.getEditText();
+                                    if ((this.staticIpString != null) && (this.staticIpString.length() > 0)
+                                            && (this.staticSubnetString != null) && (this.staticSubnetString.length() > 0)
+                                            && (this.staticGateString != null) && (this.staticGateString.length() > 0)
+                                            && (this.staticDnsString != null) && (this.staticDnsString.length() > 0)){
+                                        this.progressBar.setMessage("设置静态IP");
+                                        if (!this.progressBar.isShowing()){
+                                            this.progressBar.show();
+                                        }
+                                        WebHttpUtils.getInstance().setStaticIP(this.staticIpString, this.staticGateString, this.staticDnsString, this.staticSubnetString, this, GET_SET_STATIC);
+                                    }else{
+                                        showToast("静态Ip设置4项均不能为空");
+                                    }
+                                }else if((CommonField.DHCP).equals(this.connectType)){
+                                    this.progressBar.setMessage("设置DHCP");
+                                    WebHttpUtils.getInstance().setDHCP(this, GET_SET_DHCP);
+                                }
+                                if (!this.progressBar.isShowing())
+                                    this.progressBar.show();
                                 break;
                         }
                         break;
@@ -317,7 +362,19 @@ public class OttConnectActivity extends BaseActivity
                 this.pppoeUserView.setEditEnable(true);
                 break;
             case R.id.ott_connect_btn:
-                DataManager.getInstance().setOotConnectType(this.connectType);
+                if(DataManager.getInstance().getOotConnectType()!=null
+                        && CommonField.BRIDGE.equals(DataManager.getInstance().getOotConnectType())
+                        && !CommonField.BRIDGE.equals(this.connectType)){
+                    //原本盒子为桥接模式，切换到其他连接模式
+                    WebHttpUtils.getInstance().setBridge(this, GET_SET_BRIDGE_OFF,BRIDGE_OFF);
+                    this.progressBar.setMessage("关闭桥接");
+                    if (!this.progressBar.isShowing())
+                        this.progressBar.show();
+                    break;
+                }else{
+                    DataManager.getInstance().setOotConnectType(this.connectType);
+                }
+
                 if((CommonField.PPPOE).equals(this.connectType)){
                     this.progressBar.setMessage("设置PPPOE");
                     this.ppoePwdString = this.pppoePwdView.getEditText();
@@ -352,7 +409,7 @@ public class OttConnectActivity extends BaseActivity
                     WebHttpUtils.getInstance().setDHCP(this, GET_SET_DHCP);
                 }else if((CommonField.BRIDGE).equals(this.connectType)){
                     this.progressBar.setMessage("设置桥接");
-                    WebHttpUtils.getInstance().setBridge(this, GET_SET_BRIDGE);
+                    WebHttpUtils.getInstance().setBridge(this, GET_SET_BRIDGE,BRIDGE_ON);
                 }
                 if (!this.progressBar.isShowing())
                     this.progressBar.show();

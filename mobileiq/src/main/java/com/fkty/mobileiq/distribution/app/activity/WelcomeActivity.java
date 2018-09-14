@@ -1,6 +1,7 @@
 package com.fkty.mobileiq.distribution.app.activity;
 
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -10,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
@@ -37,6 +39,7 @@ import java.io.File;
 
 public class WelcomeActivity extends BaseActivity implements INetNotify {
 
+    private final boolean UPGRAD_BOX_FLAG=true;
     private final int GET_FOREGIN_SERVER = 1;
     private final int MY_REQUEST_CODE = 99;
     private final int GET_BOX_VERSION = 2;
@@ -66,9 +69,7 @@ public class WelcomeActivity extends BaseActivity implements INetNotify {
                     MainJsonUtil.parseForeginServer(paramMessage.obj + "");
                     break;
             }
-//            if (PermissionManager.getInstance().needRequestPermission()) {
-//                checkPermission();
-//            }
+
 //            if (!MWifiManager.getIntance().isConnect())
 //            {
 //                SystemManager.getInstance().openWifi();
@@ -80,33 +81,61 @@ public class WelcomeActivity extends BaseActivity implements INetNotify {
         }
     };
     private void upgradeBoxVersion(){
-//        Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@@ 盒子更新版本");
-//        if (!MWifiManager.getIntance().isConnect()){
-//            Toast.makeText(this, getString(R.string.wifi_disconnect_4upgrade), Toast.LENGTH_LONG).show();
-//            startActivity(LoginActivity.class);
-//            WelcomeActivity.this.finish();
-//        }else{
-//            Log.d(TAG,"@@@@@@@@@@@@@@@@@@@");
-//            WebHttpUtils.getInstance().getBoxVersion(GET_BOX_VERSION,this);
-//        }
-        startActivity(LoginActivity.class);
-        WelcomeActivity.this.finish();
+        Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@@ 盒子更新版本");
+        if (!MWifiManager.getIntance().isWifiConnect()){
+            Toast.makeText(this, getString(R.string.wifi_disconnect_4upgrade), Toast.LENGTH_LONG).show();
+            startActivity(LoginActivity.class);
+            WelcomeActivity.this.finish();
+        }else{
+            Log.d(TAG,"@@@@@@@@@@@@@@@@@@@");
+            WebHttpUtils.getInstance().getBoxVersion(GET_BOX_VERSION,this);
+        }
     }
 
-//    private void checkPermission()
-//    {
-//        Log.d("hello", "checkPermission");
-//        String[] arrayOfString1 = { "android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION" };
-//        String[] arrayOfString2 = PermissionManager.getInstance().checkPermisson(this, arrayOfString1);
-//        if (arrayOfString2[0]!=null || arrayOfString2[1]!=null )
-//        {
-//            Log.d("hello", "regist Permission");
-//            ActivityCompat.requestPermissions(this, arrayOfString2, MY_REQUEST_CODE);
-//          //  return false;
-//        }
-//      //  return true;
-//
-//    }
+    private void checkPermission(boolean needUpdate)
+    {
+        Log.d("hello", "checkPermission");
+        String[] rw = {Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE};
+        String[] checkPermisson = PermissionManager.getInstance().checkPermisson(this, rw);
+        if (checkPermisson[0]!=null || checkPermisson[1]!=null )
+        {
+            Log.d("hello", "regist Permission");
+            ActivityCompat.requestPermissions(this, rw, MY_REQUEST_CODE);
+        }else {
+
+            if(UPGRAD_BOX_FLAG && needUpdate){
+                upgradeBoxVersion();
+            }else {
+                startActivity(LoginActivity.class);
+                finish();
+            }
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int paramInt, @NonNull String[] permissions, int[] grantResults) {
+        Log.d("hello", "onRequestPermissionsResult");
+        switch (paramInt) {
+            case MY_REQUEST_CODE:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "permission allow", Toast.LENGTH_LONG).show();
+                    //        HttpUtil.getInstance().getForeginServer(GET_FOREGIN_SERVER, this);
+                    if(UPGRAD_BOX_FLAG){
+                        upgradeBoxVersion();
+                    }else {
+                        startActivity(LoginActivity.class);
+                        finish();
+                    }
+                } else {
+                    Toast.makeText(this, "permission deny", Toast.LENGTH_LONG).show();
+                    finish();
+                }
+            default:
+                super.onRequestPermissionsResult(paramInt, permissions, grantResults);
+        }
+    }
+
     @Override
     public void initParms(Bundle paramBundle) {
 
@@ -202,7 +231,6 @@ public class WelcomeActivity extends BaseActivity implements INetNotify {
                 this.handler.sendMessage(localMessage);
                 break;
             case GET_BOX_VERSION:
-
                 startActivity(LoginActivity.class);
                 WelcomeActivity.this.finish();
                 break;
@@ -240,14 +268,15 @@ public class WelcomeActivity extends BaseActivity implements INetNotify {
                     if (boxVersionJson.optInt("errorCode") == ServerErrorCode.ERROR_CODE_SUCCESS){
                         this.boxVersion=boxVersionJson.optString("versionNum");
                         Log.d(TAG,"box version="+boxVersion);
-
                         WebHttpUtils.getInstance().getBoxVersionOnServer(GET_BOX_VERSION_ON_SERVER,this);
-
+                    }else {
+                        Toast.makeText(this, getString(R.string.cannot_get_box_version), Toast.LENGTH_LONG).show();
+                        startActivity(LoginActivity.class);
+                        WelcomeActivity.this.finish();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
                 break;
             case UPGRAD_BOX_VERSION:
                 Log.d(TAG,"onSuccessNetClient:"+UPGRAD_BOX_VERSION);
@@ -267,8 +296,6 @@ public class WelcomeActivity extends BaseActivity implements INetNotify {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-
                 if(this.boxVersion!=null && !this.boxVersion.equals(lastVersionNum)){
                     Dialog upgradeDialog=new AlertDialog.Builder(this).setTitle("固件升级")
                             .setMessage("当前版本："+this.boxVersion+",发现新版本："+lastVersionNum+",是否需要更新？")
@@ -279,9 +306,6 @@ public class WelcomeActivity extends BaseActivity implements INetNotify {
                                     if (!progressBar.isShowing())
                                         progressBar.show();
                                     WebHttpUtils.getInstance().upgradeBoxVersion(WelcomeActivity.this,UPGRAD_BOX_VERSION, WebServerConstant.HTTP_GET_BOX_VERSION_URL+lastFileName);
-
-//                                    startActivity(LoginActivity.class);
-//                                    WelcomeActivity.this.finish();
                                 }
                             }).setNegativeButton("暂不更新", new DialogInterface.OnClickListener() {
                                 @Override
@@ -293,47 +317,30 @@ public class WelcomeActivity extends BaseActivity implements INetNotify {
                             }).create();
                     upgradeDialog.show();
                 }else{
-                    startActivity(LoginActivity.class);
-                    WelcomeActivity.this.finish();
+                    if(this.boxVersion!=null && this.boxVersion.equals(lastVersionNum)){
+                        startActivity(LoginActivity.class);
+                        WelcomeActivity.this.finish();
+                    }else{
+                        Toast.makeText(this, getString(R.string.cannot_get_server_version), Toast.LENGTH_LONG).show();
+                        startActivity(LoginActivity.class);
+                        WelcomeActivity.this.finish();
+                    }
                 }
                 break;
         }
 
     }
 
-    public void onRequestPermissionsResult(int paramInt,  String[] paramArrayOfString, int[] paramArrayOfInt) {
-        super.onRequestPermissionsResult(paramInt, paramArrayOfString, paramArrayOfInt);
-        Log.d("hello", "onRequestPermissionsResult");
-        switch (paramInt) {
-            default:
-                return;
-            case MY_REQUEST_CODE:
 
-                if (((paramArrayOfString.length == 1) && (paramArrayOfInt[0] == PackageManager.PERMISSION_GRANTED))
-                        || ((paramArrayOfString.length == 2) && (paramArrayOfInt[0] == PackageManager.PERMISSION_GRANTED)
-                        && (paramArrayOfInt[1] == PackageManager.PERMISSION_GRANTED))) {
-                    Toast.makeText(this, "permission allow", Toast.LENGTH_LONG).show();
-                    if (MWifiManager.getIntance().ConnectWifi()) {
-                        this.bundle.putBoolean("isSuccess", true);
-                    } else {
-                        this.bundle.putBoolean("isSuccess", false);
-                    }
-                    startActivity(LoginActivity.class);
-                    finish();
-                } else {
-                    Toast.makeText(this, "permission deny", Toast.LENGTH_LONG).show();
-//                    this.bundle.putBoolean("isSuccess", false);
-//                    startActivity(LoginActivity.class);
-                    finish();
-
-                }
-        }
-    }
 
     protected void onResume()
     {
-        startActivity(LoginActivity.class);
-        WelcomeActivity.this.finish();
+//        if (PermissionManager.getInstance().needRequestPermission()) {
+//            checkPermission(true);
+//        }else{
+//            //        HttpUtil.getInstance().getForeginServer(GET_FOREGIN_SERVER, this);
+////            upgradeBoxVersion();
+//        }
         super.onResume();
 
     }
@@ -352,10 +359,19 @@ public class WelcomeActivity extends BaseActivity implements INetNotify {
 
     @Override
     protected void onCreate(Bundle paramBundle) {
-        HttpUtil.getInstance().getForeginServer(GET_FOREGIN_SERVER, this);
-        String str2 ="http://211.136.99.12:4100";
-        DataManager.getInstance().setUrl(str2);
-        upgradeBoxVersion();
         super.onCreate(paramBundle);
+        Log.d(TAG,"onCreate");
+        if (PermissionManager.getInstance().needRequestPermission()) {
+            checkPermission(true);
+        }else{
+            //        HttpUtil.getInstance().getForeginServer(GET_FOREGIN_SERVER, this);
+            if(UPGRAD_BOX_FLAG){
+                upgradeBoxVersion();
+            }else {
+                startActivity(LoginActivity.class);
+                finish();
+            }
+        }
+
     }
 }

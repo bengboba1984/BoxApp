@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.fkty.mobileiq.distribution.R;
 import com.fkty.mobileiq.distribution.basic.BaseActivity;
+import com.fkty.mobileiq.distribution.constant.CommonField;
 import com.fkty.mobileiq.distribution.core.CoreManager;
 import com.fkty.mobileiq.distribution.manager.DataManager;
 import com.fkty.mobileiq.distribution.manager.MWifiManager;
@@ -204,7 +205,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
                 startActivity(CustomActivity.class);
                 break;
             case R.id.settingOTT:
-                if (!MWifiManager.getIntance().isConnect())
+                if (!MWifiManager.getIntance().isWifiConnect())
                 {
                     showToast(getString(R.string.wifi_disconnect_tip));
                     break;
@@ -282,14 +283,18 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
                 startActivity(NetworkActivity.class);
                 break;
             case R.id.videoTest:
-                if (!MWifiManager.getIntance().isConnect()){
-                    showToast(getString(R.string.wifi_disconnect_tip));
+                if (!MWifiManager.getIntance().isWifiConnect()){
+                    showToast(getString(R.string.wifi_disconnect_tip1));
                     break;
                 }
-//                Log.d(TAG,"++++++++++++++++++"+DataManager.getInstance().getAccount());
-                if ((DataManager.getInstance().getAccount() == null) || (DataManager.getInstance().getAccount().length() < 1)){
-                    showToast(getString(R.string.account_null));
+                if ((DataManager.getInstance().getStbID() == null) || (DataManager.getInstance().getStbID().length() < 1)){
+                    showToast(getString(R.string.STB_null));
                     startActivity(CustomActivity.class);
+                    break;
+                }
+                if(!CommonField.BRIDGE.equals(DataManager.getInstance().getOotConnectType())){
+                    showToast(getString(R.string.not_bridge));
+                    startActivity(SettingOTTActivity.class);
                     break;
                 }
                 startActivity(VideoTestActivity.class);

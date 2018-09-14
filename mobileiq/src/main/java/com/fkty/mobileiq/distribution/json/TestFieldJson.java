@@ -90,4 +90,34 @@ public class TestFieldJson {
         }
 
     }
+//    public static List<TestResultBean> parseFieldColumn4SameCol(List<TestShowFieldBean> fieldList, JSONObject resultJSON) {
+//        ArrayList testResultBeanList = new ArrayList();
+//
+//        if (fieldList != null && fieldList.size() > 0) {
+//            Iterator it = fieldList.iterator();
+//            while (it.hasNext()) {
+//                TestShowFieldBean tsfb = (TestShowFieldBean) it.next();
+//                Iterator<String> rsKeys=resultJSON.keys();
+//                while(rsKeys.hasNext()){
+//                    String rsKey=rsKeys.next();
+//                    if(rsKey.startsWith(tsfb.getColumn())){
+//                        TestResultBean trb = new TestResultBean();
+//                        trb.setTestName(tsfb.getName());
+//                        if ("int".equals(tsfb.getType())) {
+//                            int value = resultJSON.optInt(rsKey);
+//                            trb.setContent(value + tsfb.getUnit());
+//                        } else if ("string".equals(tsfb.getType())) {
+//                            String value = resultJSON.optString(rsKey);
+//                            trb.setContent(value + tsfb.getUnit());
+//                        }else {
+//                            trb.setContent("");
+//                        }
+//                        testResultBeanList.add(trb);
+//                    }
+//                }
+//            }
+//        }
+//        return testResultBeanList;
+//    }
+
 }

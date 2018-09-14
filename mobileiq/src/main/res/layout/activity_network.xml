@@ -50,6 +50,21 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/magin_middle">
+
+        <Switch
+            android:id="@id/switch_reset_connection"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/magin_big"
+            android:layout_weight="1.0"
+            android:text="抓包时重新连接网络"
+            android:textColor="@color/blue"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <Button

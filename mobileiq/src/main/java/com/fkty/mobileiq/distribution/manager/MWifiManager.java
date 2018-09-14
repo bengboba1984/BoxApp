@@ -14,6 +14,7 @@ import android.util.Log;
 
 import com.fkty.mobileiq.distribution.DistributedMobileIQApplication;
 import com.fkty.mobileiq.distribution.common.SystemManager;
+import com.fkty.mobileiq.distribution.constant.CommonField;
 
 import java.util.Iterator;
 import java.util.List;
@@ -28,7 +29,7 @@ public class MWifiManager {
     private static final int WIFICIPHER_WEP = 1;
     private static final int WIFICIPHER_WPA = 2;
     private static final int WIFICIPHER_WPA2 = 3;
-    private static final String WIFI_NAME = "OpenWrt";
+    private static final String WIFI_NAME = CommonField.SSID_PRE;
     private static final String WIFI_PWD = "1234567890";
     private static MWifiManager connect2Wifi = new MWifiManager();
     private WifiManager mWifiManager = SystemManager.getInstance().getWifiManager();
@@ -43,14 +44,14 @@ public class MWifiManager {
         Context context=DistributedMobileIQApplication.getInstance();
         if(context!=null){
             ConnectivityManager cm= (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            System.out.println("step1:Build.VERSION.SDK_INT ="+Build.VERSION.SDK_INT );
+//            System.out.println("step1:Build.VERSION.SDK_INT ="+Build.VERSION.SDK_INT );
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                System.out.println("step2");
+//                System.out.println("step2");
                 NetworkCapabilities nc = cm.getNetworkCapabilities(cm.getActiveNetwork());
                 return nc.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
             }else{
                 NetworkInfo info= cm.getActiveNetworkInfo();
-                System.out.println("step3：info.getType()="+info.getType());
+//                System.out.println("step3：info.getType()="+info.getType());
                 if(info!=null && info.getType()==ConnectivityManager.TYPE_WIFI){
                     return true;
                 }else{
@@ -179,4 +180,8 @@ public class MWifiManager {
         return null;
     }
 
+    public String getSSID()
+    {
+        return this.mWifiManager.getConnectionInfo().getSSID();
+    }
 }

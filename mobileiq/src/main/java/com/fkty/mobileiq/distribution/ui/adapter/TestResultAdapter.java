@@ -4,10 +4,12 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.fkty.mobileiq.distribution.R;
 import com.fkty.mobileiq.distribution.bean.TestResultBean;
+import com.fkty.mobileiq.distribution.constant.CommonField;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,12 +61,19 @@ public class TestResultAdapter extends BaseAdapter
             localViewHolder = new ViewHolder();
             localViewHolder.title= paramView.findViewById(R.id.test_result_list_title);
             localViewHolder.content= paramView.findViewById(R.id.test_result_list_content);
+            localViewHolder.rightImg= paramView.findViewById(R.id.test_result_list_right);
             paramView.setTag(localViewHolder);
         }else{
             localViewHolder = (ViewHolder)paramView.getTag();
         }
         localViewHolder.title.setText(this.data.get(paramInt).getTestName());
         localViewHolder.content.setText(this.data.get(paramInt).getContent());
+        if(CommonField.SHOW_SUB_DATA.equals(this.data.get(paramInt).getTestName())){
+            localViewHolder.rightImg.setVisibility(View.VISIBLE);
+        }else{
+            localViewHolder.rightImg.setVisibility(View.GONE);
+        }
+
         return paramView;
     }
 
@@ -82,6 +91,7 @@ public class TestResultAdapter extends BaseAdapter
     {
         private TextView content;
         private TextView title;
+        private ImageView rightImg;
 
         ViewHolder()
         {

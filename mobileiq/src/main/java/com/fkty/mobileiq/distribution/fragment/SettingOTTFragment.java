@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.fkty.mobileiq.distribution.R;
 import com.fkty.mobileiq.distribution.app.activity.OttConnectActivity;
+import com.fkty.mobileiq.distribution.app.activity.SSIDActivity;
 import com.fkty.mobileiq.distribution.bean.OttSettingInfoBean;
 import com.fkty.mobileiq.distribution.constant.CommonField;
 import com.fkty.mobileiq.distribution.constant.ServerErrorCode;
@@ -50,6 +51,7 @@ public class SettingOTTFragment extends Fragment implements View.OnClickListener
     private MyListview ottDeviceInfoListView;
     private TextView ottReset;
     private TextView ottRestart;
+    private TextView ottSSID;
     private TextView ottReviceConnect;
     private ProgressDialog progressBar;
     private ScheduledExecutorService service = null;
@@ -70,6 +72,7 @@ public class SettingOTTFragment extends Fragment implements View.OnClickListener
         this.ottDeviceInfoListView = this.view.findViewById(R.id.ott_device_info_listview);
         this.ottReset = this.view.findViewById(R.id.ott_reset);
         this.ottRestart = this.view.findViewById(R.id.ott_restart);
+        this.ottSSID = this.view.findViewById(R.id.ott_ssid);
         this.ottReviceConnect = this.view.findViewById(R.id.ott_connect_type_revise);
     }
 
@@ -124,10 +127,22 @@ public class SettingOTTFragment extends Fragment implements View.OnClickListener
         OttSettingInfoBean hardDiskBean = new OttSettingInfoBean();
         hardDiskBean.setName(getString(R.string.ott_setting_device_harddisk));
         hardDiskBean.setContent(DataManager.getInstance().getHardDisk());
+        OttSettingInfoBean ipAddressBean=new OttSettingInfoBean();
+        ipAddressBean.setName(getString(R.string.ott_setting_device_ipAddress));
+        ipAddressBean.setContent(DataManager.getInstance().getStaticIP());
+        OttSettingInfoBean subNetMaskBean=new OttSettingInfoBean();
+        subNetMaskBean.setName(getString(R.string.ott_setting_device_subNetMask));
+        subNetMaskBean.setContent(DataManager.getInstance().getStaticSubNet());
+        OttSettingInfoBean gatewayBean=new OttSettingInfoBean();
+        gatewayBean.setName(getString(R.string.ott_setting_device_gateway));
+        gatewayBean.setContent(DataManager.getInstance().getStaticGate());
         this.deviceList.add(cpuBean);
         this.deviceList.add(memoryBean);
         this.deviceList.add(hardDiskBean);
         this.deviceList.add(deviceSeqBean);
+        this.deviceList.add(ipAddressBean);
+        this.deviceList.add(subNetMaskBean);
+        this.deviceList.add(gatewayBean);
         this.deviceAdapter = new OTTSettingAdapter(getActivity(), this.deviceList);
         this.ottDeviceInfoListView.setAdapter(this.deviceAdapter);
     }
@@ -183,6 +198,9 @@ public class SettingOTTFragment extends Fragment implements View.OnClickListener
                 });
                 localBuilder1.create().show();
                 break;
+            case R.id.ott_ssid:
+                startActivity(new Intent(getActivity(), SSIDActivity.class));
+                break;
         }
     }
 
@@ -197,6 +215,7 @@ public class SettingOTTFragment extends Fragment implements View.OnClickListener
         initView();
         initData();
         this.ottRestart.setOnClickListener(this);
+        this.ottSSID.setOnClickListener(this);
         this.ottReset.setOnClickListener(this);
         this.ottReviceConnect.setOnClickListener(this);
         this.service = Executors.newSingleThreadScheduledExecutor();

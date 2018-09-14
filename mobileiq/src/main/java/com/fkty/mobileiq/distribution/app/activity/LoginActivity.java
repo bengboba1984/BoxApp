@@ -2,6 +2,7 @@ package com.fkty.mobileiq.distribution.app.activity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -30,6 +31,8 @@ import com.fkty.mobileiq.distribution.utils.Preferences;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.fkty.mobileiq.distribution.constant.NetWorkConstant.CAPTURE_HTTP_CODE;
 
 public class LoginActivity extends BaseActivity implements ILoginView, LoginConstant, AdapterView.OnItemClickListener {
     private final int GET_FOREGIN_SERVER = 1;
@@ -104,13 +107,19 @@ public class LoginActivity extends BaseActivity implements ILoginView, LoginCons
     public void doBusiness(Context paramContext) {
         this.backImg.setVisibility(View.GONE);
         this.title.setText(getString(R.string.app_name));
-        if (Preferences.contains(this, LoginConstant.USERNAME))
-        {
-            this.userName.setText(Preferences.get(this, LoginConstant.USERNAME, "") + "");
-            if (Preferences.contains(this, "password"))
-                this.password.setText(Preferences.get(this, LoginConstant.PASSWORD, "") + "");
-            if (Preferences.contains(this, "jobnumber"))
-                this.jobnumber.setText(Preferences.get(this, LoginConstant.JOBNUMBER, "") + "");
+
+
+        SharedPreferences loginInfo=getSharedPreferences(LOGIN_INFO, Context.MODE_PRIVATE);
+        if(loginInfo!=null){
+            if (loginInfo.contains(LoginConstant.USERNAME)) {
+                this.userName.setText(loginInfo.getString(LoginConstant.USERNAME, null));
+            }
+            if (loginInfo.contains(LoginConstant.PASSWORD)){
+                this.password.setText(loginInfo.getString(LoginConstant.PASSWORD, null));
+            }
+            if (loginInfo.contains(LoginConstant.JOBNUMBER)) {
+                this.jobnumber.setText(loginInfo.getString(LoginConstant.JOBNUMBER, null));
+            }
         }
     }
 
@@ -128,13 +137,16 @@ public class LoginActivity extends BaseActivity implements ILoginView, LoginCons
             case R.id.login_btn:
                 if (!checkLoginInfo())return;
                 controlDialog(DIALOG_SHOW, "开始登陆");
-
-
                 //for test
                 this.loginInfo=getLoginInfo();
                 DataManager.getInstance().setLoginInfo(this.loginInfo);
 
-
+                SharedPreferences loginInfo=getSharedPreferences(LOGIN_INFO, Context.MODE_PRIVATE);
+                SharedPreferences.Editor loginInfoEditor=loginInfo.edit();
+                loginInfoEditor.putString(LoginConstant.USERNAME,this.loginInfo.getUserName());
+                loginInfoEditor.putString(LoginConstant.PASSWORD,this.loginInfo.getPassword());
+                loginInfoEditor.putString(LoginConstant.JOBNUMBER,this.loginInfo.getJobnumber());
+                loginInfoEditor.commit();
 
                // this.presenter.startLogin(1, getLoginInfo());
                 controlDialog(DIALOG_DISMISS,null);
@@ -237,11 +249,11 @@ public class LoginActivity extends BaseActivity implements ILoginView, LoginCons
 
     @Override
     public void onLoginSuccess(Bundle paramBundle) {
-        Preferences.put(this, "username", this.loginInfo.getUserName());
-        Preferences.put(this, "password", this.loginInfo.getPassword());
-        Preferences.put(this, "unit", this.loginInfo.getUnit());
-        Preferences.put(this, "jobnumber", this.loginInfo.getJobnumber());
-        DataManager.getInstance().setLoginInfo(this.loginInfo);
+//        Preferences.put(this, "username", this.loginInfo.getUserName());
+//        Preferences.put(this, "password", this.loginInfo.getPassword());
+//        Preferences.put(this, "unit", this.loginInfo.getUnit());
+//        Preferences.put(this, "jobnumber", this.loginInfo.getJobnumber());
+//        DataManager.getInstance().setLoginInfo(this.loginInfo);
         if (PermissionManager.getInstance().needRequestPermission())
         {
             checkPermission();

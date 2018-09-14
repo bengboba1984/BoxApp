@@ -2,8 +2,10 @@ package com.fkty.mobileiq.distribution.manager;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.nfc.Tag;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -36,6 +38,7 @@ public class PermissionManager {
 
     public boolean needRequestPermission()
     {
+        Log.d("PermissionManager",""+Build.VERSION.SDK_INT );
         return Build.VERSION.SDK_INT >= 23;
     }
 }

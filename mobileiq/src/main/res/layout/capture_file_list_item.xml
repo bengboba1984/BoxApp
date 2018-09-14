@@ -25,13 +25,27 @@
             android:layout_height="wrap_content"
             android:text="文件名称"
             android:textColor="@color/text_black" />
-
-        <TextView
-            android:id="@id/capture_file_list_item_filetime"
-            android:layout_width="fill_parent"
+        <LinearLayout android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="创建日期"
-            android:textColor="@color/test_record_text" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@id/capture_file_list_item_filetime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="创建日期"
+                android:textColor="@color/test_record_text" />
+
+            <TextView
+                android:id="@id/capture_file_list_item_detail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:autoLink="none"
+                android:text="查看详情"
+                android:textColor="@color/blue"
+                android:visibility="gone" />
+        </LinearLayout>
+
     </LinearLayout>
 
     <TextView

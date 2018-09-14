@@ -34,16 +34,20 @@ import com.fkty.mobileiq.distribution.utils.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 public class VideoTestActivity extends BaseActivity implements INetWorkView, INetNotify {
     private final int GET_SET_BRIDGE = 4;
+    private final int BRIDGE_ON = 1;
+    private final int BRIDGE_OFF = 0;
     private final int GET_SET_DHCP = 3;
     private final int GET_SET_PPPOE = 1;
     private final int GET_SET_STATIC = 2;
@@ -152,10 +156,12 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
         this.captureBtn = paramView.findViewById(R.id.start_capture);
         this.uploadBtn = paramView.findViewById(R.id.upload_capture);
         this.deleteBtn = paramView.findViewById(R.id.delete_captrue_file);
+
     }
 
     @Override
     public void initData() {
+        Log.d(TAG,"this.status="+this.status);
         title.setText(getString(R.string.video_file_title));
         if (this.progressBar == null)
         {
@@ -225,6 +231,7 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
 
     @Override
     public void widgetClick(View paramView) {
+        Log.d(TAG,"this.status="+this.status);
         switch (paramView.getId())
         {
             case R.id.vixtel_btn_back:
@@ -243,7 +250,12 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
                 if(this.status==CAPTURE_READY || this.status==CAPTURE_FINISH){
                     this.status=CAPTUREING;
                     OTTProperty.getInstance().setAllowedStopCapture(false);
-                    WebHttpUtils.getInstance().setDHCP(this, GET_SET_BRIDGE);
+                    this.captureBtn.setText(R.string.stop_capture);
+                    this.captureBtn.setTextColor(Color.RED);
+                    this.fileLayout.setVisibility(View.VISIBLE);
+                    captureTime.setText("");
+                    countHandler.postDelayed(runnable,1000);
+                    WebHttpUtils.getInstance().setBridge(this, GET_SET_BRIDGE,BRIDGE_ON);
 
                 }else if(this.status==CAPTUREING){
                     if(OTTProperty.getInstance().isAllowedStopCapture()){
@@ -252,7 +264,7 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
                             this.progressBar.show();
                         this.presenter.stop();
                     }else{
-                        showToast("DHCP重置中，请稍后");
+                        showToast("网桥设置中，请稍后");
                     }
 
 
@@ -381,8 +393,14 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
 
     @Override
     public void onErrorNetClient(int paramInt, String paramString) {
+        Log.d(TAG,paramString);
         Toast.makeText(this, "无法设为桥接模式！", Toast.LENGTH_SHORT).show();
         this.captureBtn.setText(R.string.start_capture);
+        this.captureBtn.setTextColor(Color.WHITE);
+        countHandler.removeCallbacks(runnable);
+        if(this.fileLayout.getVisibility()==View.VISIBLE){
+            this.fileLayout.setVisibility(View.GONE);
+        }
         this.status=CAPTURE_FINISH;
     }
 
@@ -393,17 +411,19 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
 
     @Override
     public void onSuccessNetClient(int paramInt, String paramString) {
+        DataManager.getInstance().setOotConnectType(CommonField.BRIDGE);
         Toast.makeText(this, "开始测试，点击结束查看结果", Toast.LENGTH_SHORT).show();
-        long l2 = System.currentTimeMillis();
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMddHHmmss");
+//        long l2 = System.currentTimeMillis();
         int j = (int)(1000.0D * Math.random());
-        String fn= DataManager.getInstance().getStbID()+"_"+l2+j;
+        String fn= DataManager.getInstance().getStbID()+"_"+sdf.format(new Date())+j;
         this.presenter.start(fn);
-        this.captureBtn.setText(R.string.stop_capture);
-        this.captureBtn.setText(R.string.stop_capture);
-        this.captureBtn.setTextColor(Color.RED);
-        this.fileLayout.setVisibility(View.VISIBLE);
-        captureTime.setText("");
-        countHandler.postDelayed(runnable,1000);
+//        this.captureBtn.setText(R.string.stop_capture);
+//        this.captureBtn.setText(R.string.stop_capture);
+//        this.captureBtn.setTextColor(Color.RED);
+//        this.fileLayout.setVisibility(View.VISIBLE);
+//        captureTime.setText("");
+//        countHandler.postDelayed(runnable,1000);
     }
 
     Handler countHandler=new Handler();
@@ -434,6 +454,7 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
     @Override
     protected void onDestroy() {
         countHandler.removeCallbacks(runnable);
+        WebHttpUtils.getInstance().setBridge(this, GET_SET_BRIDGE,BRIDGE_OFF);
         super.onDestroy();
     }
 }

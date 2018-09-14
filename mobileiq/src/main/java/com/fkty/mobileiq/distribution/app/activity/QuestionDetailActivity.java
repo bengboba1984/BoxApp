@@ -1,5 +1,6 @@
 package com.fkty.mobileiq.distribution.app.activity;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +11,8 @@ import android.widget.TextView;
 import com.fkty.mobileiq.distribution.R;
 import com.fkty.mobileiq.distribution.basic.BaseActivity;
 import com.fkty.mobileiq.distribution.bean.TestTypeBean;
+import com.fkty.mobileiq.distribution.constant.CommonField;
+import com.fkty.mobileiq.distribution.fragment.TestResultDetailFragment;
 import com.fkty.mobileiq.distribution.fragment.TestResultFragment;
 
 public class QuestionDetailActivity extends BaseActivity
@@ -38,11 +41,21 @@ public class QuestionDetailActivity extends BaseActivity
     {
         Log.d("QuestionDetailActivity", String.valueOf("doBusiness:"+this.bean.getResult()));
         this.titel.setText("测试结果详情");
-        TestResultFragment localTestResultFragment = new TestResultFragment();
-        this.bundle = new Bundle();
-        this.bundle.putParcelable("data", this.bean);
-        localTestResultFragment.setArguments(this.bundle);
-        getFragmentManager().beginTransaction().add(R.id.question_detail_framelayout, localTestResultFragment).commit();
+
+        if(CommonField.TEST_TYPE_TRACE_HOP==this.testType){
+            TestResultDetailFragment trdf = new TestResultDetailFragment();
+            this.bundle = new Bundle();
+            this.bundle.putParcelable("data", this.bean);
+            trdf.setArguments(this.bundle);
+            getFragmentManager().beginTransaction().add(R.id.question_detail_framelayout, trdf).commit();
+        }else{
+            TestResultFragment trf = new TestResultFragment();
+            this.bundle = new Bundle();
+            this.bundle.putParcelable("data", this.bean);
+            trf.setArguments(this.bundle);
+            getFragmentManager().beginTransaction().add(R.id.question_detail_framelayout, trf).commit();
+        }
+
     }
 
     public void initData()

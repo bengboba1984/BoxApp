@@ -65,13 +65,21 @@
     <string name="start_test">开始测试</string>
     <string name="start_capture">开始抓包</string>
     <string name="upload_captrue_file">上传至平台</string>
-    <string name="captrue_file_title">手动抓包</string>
-    <string name="video_file_title">视频抓包</string>
+    <string name="captrue_file_title">宽带抓包</string>
+    <string name="video_file_title">互动抓包</string>
     <string name="stop_capture">停止抓包</string>
     <string name="delete_captrue_file">一键删除</string>
     <string name="logout">退出登录</string>
     <string name="videoTest">互动抓包</string>
     <string name="wifi_disconnect_4upgrade">当前未连接盒子热点，无法升级固件</string>
     <string name="url_null">请先设置URL</string>
+    <string name="cannot_get_box_version">获取盒子版本号失败！</string>
+    <string name="cannot_get_server_version">无法获取最新版本号！</string>
+    <string name="ott_setting_device_ipAddress">IP地址</string>
+    <string name="ott_setting_device_subNetMask">掩码</string>
+    <string name="ott_setting_device_gateway">网关</string>
+    <string name="STB_null">请先设置STB ID</string>
+    <string name="not_bridge">请先设为桥接模式</string>
+    <string name="ott_setting_ssid">修改盒子wifi名称</string>
 
 </resources>

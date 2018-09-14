@@ -67,7 +67,7 @@ public class SettingOTTActivity extends BaseActivity {
 
     @Override
     public void doBusiness(Context paramContext) {
-        if (MWifiManager.getIntance().isConnect())
+        if (MWifiManager.getIntance().isWifiConnect())
         {
             getFragmentManager().beginTransaction().replace(R.id.ott_connect_framelayout, this.settingOTTFragment).commit();
         }else{

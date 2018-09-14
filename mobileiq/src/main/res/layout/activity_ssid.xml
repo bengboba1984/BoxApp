@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/gray_bg"
+    android:orientation="vertical">
+
+    <include
+        android:id="@id/title_bar"
+        layout="@layout/app_action_bar_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/magin_middle"
+        android:text="Wifi SSID"
+        android:textColor="@color/blue"
+        android:textSize="@dimen/font_middle" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/magin_big"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SSID" />
+
+        <EditText
+            android:id="@id/ssid_name_pre"
+            android:layout_width="0.0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:background="@null"
+            android:gravity="end"
+            android:paddingRight="@dimen/magin_middle"
+            android:text=""
+            android:inputType="none"/>
+
+        <EditText
+            android:id="@id/ssid_name"
+            android:layout_width="0.0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:background="@drawable/edittext_background"
+            android:gravity="start"
+            android:paddingRight="@dimen/magin_middle"
+            android:text=""
+            android:maxLength="6"
+            android:singleLine="true"
+            android:inputType="number"
+            android:digits="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            android:ellipsize="end"/>
+    </LinearLayout>
+    <Button android:id="@id/setting_ssid_btn" android:layout_marginLeft="@dimen/magin_big"
+        android:layout_marginTop="40.0dip" android:layout_marginRight="@dimen/magin_big"
+        android:textColor="@color/white"
+        android:text="@string/ok" style="@style/button" />
+</LinearLayout>

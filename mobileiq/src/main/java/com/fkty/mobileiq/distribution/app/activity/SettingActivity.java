@@ -62,7 +62,7 @@ public class SettingActivity extends BaseActivity implements INetNotify,View.OnC
     public void initData() {
         this.editText.setText(DataManager.getInstance().getUrl());
         if(this.editText.getText()==null || this.editText.getText().length()<1){
-            this.editText.setText("http://211.136.99.12:4100");
+            this.editText.setText(CommonField.DEFAULT_PLATEFORM_URL);
         }
         if (this.progressBar == null)
         {

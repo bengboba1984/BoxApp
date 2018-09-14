@@ -24,6 +24,7 @@ public class DataManager {
     private String hardDisk;
     private String deviceSeq;
     private String memory;
+    private String mschapErrcode;
     private String staticIP;
     private String staticSubNet;
     private String staticGate;
@@ -38,6 +39,7 @@ public class DataManager {
     private LoginInfo loginInfo;
     private List<TestShowFieldBean> dnsField = new ArrayList();
     private List<TestShowFieldBean> traceField = new ArrayList();
+    private List<TestShowFieldBean> traceSubField = new ArrayList();
     private List<TestShowFieldBean> httpField = new ArrayList();
     private List<TestShowFieldBean> pingField = new ArrayList();
     private List<TestShowFieldBean> speedField = new ArrayList();
@@ -79,16 +81,21 @@ public class DataManager {
         traceField.add(new TestShowFieldBean("hostIp",true,"主机IP",0,"string",""));
         traceField.add(new TestShowFieldBean("lossPercent",true,"丢包率",0,"int","%"));
         traceField.add(new TestShowFieldBean("hopCount",true,"路由跳数",0,"int",""));
+        traceSubField.add(new TestShowFieldBean("timeToLive",true,"时间",0,"string","毫秒"));
+        traceSubField.add(new TestShowFieldBean("hostIp",true,"主机IP",0,"string",""));
+        traceSubField.add(new TestShowFieldBean("avgDelay",true,"平均时延",0,"string","毫秒"));
+        traceSubField.add(new TestShowFieldBean("lossPercent",true,"丢包率",0,"int","%"));
+        traceSubField.add(new TestShowFieldBean("avgJitter",true,"平均抖动",0,"string","毫秒"));
 
         httpField.add(new TestShowFieldBean("connectTime",true,"连接时间",0,"int","毫秒"));
         httpField.add(new TestShowFieldBean("firstByteTime",true,"首字节时间",0,"int","毫秒"));
         httpField.add(new TestShowFieldBean("hostIp",true,"主机IP",0,"string",""));
-        httpField.add(new TestShowFieldBean("firstPageTime",true,"首页加载时间",0,"int","毫秒"));
+//        httpField.add(new TestShowFieldBean("firstPageTime",true,"首页加载时间",0,"int","毫秒"));
 //        httpField.add(new TestShowFieldBean("meanQuality",true,"综合质量",0,"int",""));
-//        httpField.add(new TestShowFieldBean("pageLoadTime",true,"页面加载时间",0,"int","毫秒"));
+        httpField.add(new TestShowFieldBean("pageLoadTime",true,"页面加载时间",0,"int","毫秒"));
         httpField.add(new TestShowFieldBean("resolveTime",true,"解析时间",0,"int","毫秒"));
-        httpField.add(new TestShowFieldBean("responseCode",true,"响应码",0,"int",""));
-        httpField.add(new TestShowFieldBean("throughput",true,"吞吐率",0,"int","Byte/S"));
+        httpField.add(new TestShowFieldBean("responseCode",true,"响应码",0,"string",""));
+        httpField.add(new TestShowFieldBean("throughput",true,"吞吐率",0,"int","KB/S"));
 
         dnsField.add(new TestShowFieldBean("avgReplyTime",true,"平均响应时间",0,"string","毫秒"));
         dnsField.add(new TestShowFieldBean("numberOfAnswers",true,"记录数",0,"int",""));
@@ -364,5 +371,21 @@ public class DataManager {
 
     public void setSpeedField(List<TestShowFieldBean> speedField) {
         this.speedField = speedField;
+    }
+
+    public List<TestShowFieldBean> getTraceSubField() {
+        return traceSubField;
+    }
+
+    public void setTraceSubField(List<TestShowFieldBean> traceSubField) {
+        this.traceSubField = traceSubField;
+    }
+
+    public String getMschapErrcode() {
+        return mschapErrcode;
+    }
+
+    public void setMschapErrcode(String mschapErrcode) {
+        this.mschapErrcode = mschapErrcode;
     }
 }

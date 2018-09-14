@@ -1,8 +1,10 @@
 package com.fkty.mobileiq.distribution.http;
 
+import android.nfc.Tag;
 import android.util.Log;
 
 import com.fkty.mobileiq.distribution.app.activity.NewQuestionActivity;
+import com.fkty.mobileiq.distribution.app.activity.SSIDActivity;
 import com.fkty.mobileiq.distribution.bean.TestParamsBean;
 import com.fkty.mobileiq.distribution.constant.CommonField;
 import com.fkty.mobileiq.distribution.constant.OpenTestConstant;
@@ -56,6 +58,8 @@ public class WebHttpUtils implements Runnable{
     private String filePath;
     private String localPath;
     private String boxUpgradeVersionFP;
+    private String ssid;
+    private int bridgeFlag;
 
     public static WebHttpUtils getInstance()
     {
@@ -68,9 +72,11 @@ public class WebHttpUtils implements Runnable{
         String str = Thread.currentThread().getName();
         if (("set_url").equals(str)){
             setUrlTask();
-        }else if("get_templet".equals(str)){
-            getTempletTask();
-        }else if (("set_dhcp").equals(str)){
+        }
+//        else if("get_templet".equals(str)){
+//            getTempletTask();
+//        }
+        else if (("set_dhcp").equals(str)){
             setDHCPTask();
         }else if (("set_bridge").equals(str)){
             setBridgeTask();
@@ -104,6 +110,8 @@ public class WebHttpUtils implements Runnable{
             upgradeBoxVersionTask();
         }else if("upload_result2_plateform".equals(str)){
             uploadResult2PlateformTask();
+        }else if("set_ssid".equals(str)){
+            setSSIDTask();
         }
 
     }
@@ -324,20 +332,20 @@ public class WebHttpUtils implements Runnable{
         this.thread.start();
         return true;
     }
-    public boolean getTemplet(INetNotify paramINetNotify, int paramInt)
-    {
-        if (this.thread != null)
-        {
-            if (this.thread.isAlive())
-                return false;
-            this.thread = null;
-        }
-        this.id = paramInt;
-        this.notify = paramINetNotify;
-        this.thread = new Thread(this, "get_templet");
-        this.thread.start();
-        return true;
-    }
+//    public boolean getTemplet(INetNotify paramINetNotify, int paramInt)
+//    {
+//        if (this.thread != null)
+//        {
+//            if (this.thread.isAlive())
+//                return false;
+//            this.thread = null;
+//        }
+//        this.id = paramInt;
+//        this.notify = paramINetNotify;
+//        this.thread = new Thread(this, "get_templet");
+//        this.thread.start();
+//        return true;
+//    }
     public boolean getTemplet4Test(INetNotify paramINetNotify, int paramInt)
     {
         if (this.thread != null)
@@ -354,7 +362,8 @@ public class WebHttpUtils implements Runnable{
     }
     public void getTempletTask4Test()
     {
-        OkHttpUtils.postString().url("http://211.136.99.12:4100/getItestorTemplateList").content("")
+
+        OkHttpUtils.postString().url(DataManager.getInstance().getUrl()+WebServerConstant.WEB_POST_GETTEMPLET).content("")
                 .id(this.id).build().execute(new StringCallback()
         {
             public void onError(Call paramCall, Exception paramException, int paramInt)
@@ -391,24 +400,24 @@ public class WebHttpUtils implements Runnable{
             });
         }
     }
-    public void getTempletTask()
-    {
-        ((PostStringBuilder)((PostStringBuilder)OkHttpUtils.postString().url(WebServerConstant.WEB_POST_GETTEMPLET)).content("")
-                .id(this.id)).build().execute(new StringCallback()
-        {
-            public void onError(Call paramCall, Exception paramException, int paramInt)
-            {
-                if (WebHttpUtils.this.notify != null)
-                    WebHttpUtils.this.notify.onErrorNetClient(paramInt, paramException.getMessage());
-            }
-
-            public void onResponse(String paramString, int paramInt)
-            {
-                if (WebHttpUtils.this.notify != null)
-                    WebHttpUtils.this.notify.onSuccessNetClient(paramInt, paramString);
-            }
-        });
-    }
+//    public void getTempletTask()
+//    {
+//        ((PostStringBuilder)((PostStringBuilder)OkHttpUtils.postString().url(WebServerConstant.WEB_POST_GETTEMPLET)).content("")
+//                .id(this.id)).build().execute(new StringCallback()
+//        {
+//            public void onError(Call paramCall, Exception paramException, int paramInt)
+//            {
+//                if (WebHttpUtils.this.notify != null)
+//                    WebHttpUtils.this.notify.onErrorNetClient(paramInt, paramException.getMessage());
+//            }
+//
+//            public void onResponse(String paramString, int paramInt)
+//            {
+//                if (WebHttpUtils.this.notify != null)
+//                    WebHttpUtils.this.notify.onSuccessNetClient(paramInt, paramString);
+//            }
+//        });
+//    }
 
     public boolean setDHCP(INetNotify paramINetNotify, int paramInt)
     {
@@ -443,7 +452,7 @@ public class WebHttpUtils implements Runnable{
             }
         });
     }
-    public boolean setBridge(INetNotify paramINetNotify, int paramInt)
+    public boolean setBridge(INetNotify paramINetNotify, int paramInt,int flag)
     {
         if (this.thread != null)
         {
@@ -453,6 +462,7 @@ public class WebHttpUtils implements Runnable{
         }
         this.id = paramInt;
         this.notify = paramINetNotify;
+        this.bridgeFlag=flag;
         this.thread = new Thread(this, "set_bridge");
         this.thread.start();
         return true;
@@ -460,12 +470,14 @@ public class WebHttpUtils implements Runnable{
 
     public void setBridgeTask()
     {
-        ((GetBuilder)((GetBuilder)OkHttpUtils.get().url(WebServerConstant.WEB_GET_SET_BRIDGE)).id(this.id)).build().execute(new StringCallback()
+        Log.d("WebHttpUtils","setBridgeTask:url="+WebServerConstant.WEB_GET_SET_BRIDGE+"?mode="+this.bridgeFlag);
+        ((GetBuilder)((GetBuilder)OkHttpUtils.get().url(WebServerConstant.WEB_GET_SET_BRIDGE+"?mode="+this.bridgeFlag)).id(this.id)).build().execute(new StringCallback()
         {
-            public void onError(Call paramCall, Exception paramException, int paramInt)
+            public void onError(Call paramCall, Exception e, int paramInt)
             {
+//                Log.d("setBridgeTask","exception="+);
                 if (WebHttpUtils.this.notify != null)
-                    WebHttpUtils.this.notify.onErrorNetClient(paramInt, paramException.getMessage());
+                    WebHttpUtils.this.notify.onErrorNetClient(paramInt, e.getMessage());
             }
 
             public void onResponse(String paramString, int paramInt)
@@ -615,11 +627,11 @@ public class WebHttpUtils implements Runnable{
     {
         String userName = DataManager.getInstance().getLoginInfo().getUserName();
         userName="root";
-        int count=200;
+        int count=10000;
         String ootConnectType=DataManager.getInstance().getOotConnectType();
         int captureType=2;
         if(CommonField.BRIDGE.equals(ootConnectType)){
-            captureType=1;
+            captureType=3;
         }
         Log.d("WebHttp","url="+WebServerConstant.WEB_GET_START_CAPTURE + "?count="+count+"&captureType="+captureType+"&userName=" + userName + "&fileName=" + this.fileName);
 //        LogUtils.e("-----", "url:" + WebServerConstant.WEB_GET_START_CAPTURE + "?userName=" + str + "&fileName=" + this.fileName);
@@ -801,9 +813,10 @@ public class WebHttpUtils implements Runnable{
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
+            Log.d("update box","WebServerConstant.UPDATE_FIRMWARE="+WebServerConstant.UPDATE_FIRMWARE+"|json="+pJson.toString());
             OkHttpUtils.postString().url(WebServerConstant.UPDATE_FIRMWARE).content(pJson.toString()).id(this.id).build().execute(new StringCallback(){
             public void onError(Call paramCall, Exception paramException, int paramInt) {
+                Log.d("WebHttpUtils","paramException="+paramException);
                     if (WebHttpUtils.this.notify != null)
                         WebHttpUtils.this.notify.onErrorNetClient(paramInt, paramException.getMessage());
                 }
@@ -878,5 +891,41 @@ public class WebHttpUtils implements Runnable{
                     WebHttpUtils.this.notify.onSuccessNetClient(paramInt, paramString);
             }
         });
+    }
+
+    public boolean setSSID(INetNotify ssidActivity, int set_ssid, String ssid) {
+        if (this.thread != null)
+        {
+            if (this.thread.isAlive())
+                return false;
+            this.thread = null;
+        }
+        this.ssid = ssid;
+        this.id = set_ssid;
+        this.notify = ssidActivity;
+        this.thread = new Thread(this, "set_ssid");
+        this.thread.start();
+        return true;
+    }
+    public void setSSIDTask()
+    {
+        if ((this.ssid != null) && (this.ssid.length() > 0)){
+            ((GetBuilder)((GetBuilder)OkHttpUtils.get().url(WebServerConstant.WEB_POST_SET_SSID + "?id=" + this.ssid)).id(this.id)).build().execute(new StringCallback()
+            {
+                public void onError(Call paramCall, Exception e, int paramInt)
+                {
+                    Log.e("WebHttpUtils","setSSIDTask:onError="+e.getMessage());
+                    if (WebHttpUtils.this.notify != null)
+                        WebHttpUtils.this.notify.onErrorNetClient(paramInt, e.getMessage());
+                }
+
+                public void onResponse(String paramString, int paramInt)
+                {
+                    Log.d("WebHttpUtils","setSSIDTask:onResponse="+paramString);
+                    if (WebHttpUtils.this.notify != null)
+                        WebHttpUtils.this.notify.onSuccessNetClient(paramInt, paramString);
+                }
+            });
+        }
     }
 }

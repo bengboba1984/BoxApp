@@ -9,6 +9,14 @@ public class TestResultBean
     private String content;
     private String testName;
 
+    public TestResultBean() {
+    }
+
+    public TestResultBean(String testName, String content ) {
+        this.content = content;
+        this.testName = testName;
+    }
+
     public String getContent()
     {
         return this.content;

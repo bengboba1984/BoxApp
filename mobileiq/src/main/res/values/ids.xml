@@ -126,4 +126,19 @@
     <item name="custom_layout2" type="id">124</item>
     <item name="stb_id_key" type="id">125</item>
     <item name="stb_id" type="id">126</item>
+    <item name="test_result_title" type="id">127</item>
+    <item name="test_result_list_right" type="id">128</item>
+    <item name="question_detail_sub_framelayout" type="id">129</item>
+    <item name="test_result_detail_list_no" type="id">130</item>
+    <item name="test_result_detail_list_time" type="id">131</item>
+    <item name="test_result_detail_list_ip" type="id">132</item>
+    <item name="test_result_detail_list_avgDelay" type="id">133</item>
+    <item name="test_result_detail_list_lossPercent" type="id">134</item>
+    <item name="test_result_detail_list_avgJitter" type="id">135</item>
+    <item name="switch_reset_connection" type="id">136</item>
+    <item name="capture_file_list_item_detail" type="id">137</item>
+    <item name="ott_ssid" type="id">138</item>
+    <item name="ssid_name" type="id">139</item>
+    <item name="setting_ssid_btn" type="id">140</item>
+    <item name="ssid_name_pre" type="id">141</item>
 </resources>

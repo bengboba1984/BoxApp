@@ -58,7 +58,8 @@
         <activity android:name=".app.activity.NewOpenTestActivity" />
         <activity android:name=".app.activity.NetworkActivity" />
         <activity android:name=".app.activity.UserInfoActivity" />
-        <activity android:name=".app.activity.VideoTestActivity"></activity>
+        <activity android:name=".app.activity.VideoTestActivity" />
+        <activity android:name=".app.activity.SSIDActivity"></activity>
     </application>
 
 </manifest>

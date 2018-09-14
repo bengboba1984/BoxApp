@@ -57,7 +57,7 @@ public class CoreManager implements Runnable {
         {
             this.service = Executors.newSingleThreadScheduledExecutor();
             if (this.service != null)
-                this.service.scheduleWithFixedDelay(this, 0L, 500L, TimeUnit.MILLISECONDS);
+                this.service.scheduleWithFixedDelay(this, 0L, 5000L, TimeUnit.MILLISECONDS);
         }
     }
 }

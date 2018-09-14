@@ -11,6 +11,9 @@
             <com.fkty.mobileiq.distribution.ui.MyListview android:id="@id/ott_connect_type_listview" android:layout_width="fill_parent"
                 android:layout_height="wrap_content" android:layout_marginLeft="20.0dip" android:divider="@null" />
             <View android:background="@color/gray_bg" android:layout_width="fill_parent" android:layout_height="1.0dip" />
+            <TextView android:textSize="@dimen/font_middle" android:textColor="@color/blue" android:id="@id/ott_ssid"
+                android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_margin="@dimen/magin_middle"
+                android:text="@string/ott_setting_ssid" />
             <TextView android:textSize="@dimen/font_middle" android:textColor="@color/blue" android:id="@id/ott_restart"
                 android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_margin="@dimen/magin_middle"
                 android:text="@string/ott_setting_restart" />

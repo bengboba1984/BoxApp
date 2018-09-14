@@ -3,6 +3,7 @@ package com.fkty.mobileiq.distribution.app.activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +30,7 @@ import com.fkty.mobileiq.distribution.http.INetNotify;
 import com.fkty.mobileiq.distribution.http.WebHttpUtils;
 import com.fkty.mobileiq.distribution.manager.DataManager;
 import com.fkty.mobileiq.distribution.manager.FTPManager;
+import com.fkty.mobileiq.distribution.manager.OTTProperty;
 import com.fkty.mobileiq.distribution.manager.UploadProgressListener;
 import com.fkty.mobileiq.distribution.ui.adapter.CaptureFileListAdapter;
 import com.fkty.mobileiq.distribution.utils.FileUtils;
@@ -47,6 +50,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+
+import static com.fkty.mobileiq.distribution.constant.NetWorkConstant.CAPTURE_HTTP_CODE;
+import static com.fkty.mobileiq.distribution.constant.NetWorkConstant.GET_CAPTURE_FILE_ID;
 
 public class NetworkActivity extends BaseActivity
         implements INetWorkView,INetNotify {
@@ -73,6 +79,9 @@ public class NetworkActivity extends BaseActivity
     private ProgressDialog uploadProgressBar;
     private TextView captureTime;
     private LinearLayout fileLayout;
+    private String filePath;
+    private String fileName;
+    private Switch resetConnection;
 
 
     @Override
@@ -80,10 +89,13 @@ public class NetworkActivity extends BaseActivity
         this.status=CAPTURE_READY;
         this.captureBtn.setText(R.string.start_capture);
         this.captureBtn.setTextColor(Color.WHITE);
+        this.resetConnection.setEnabled(true);
         countHandler.removeCallbacks(runnable);
         if(this.fileLayout.getVisibility()==View.VISIBLE){
             this.fileLayout.setVisibility(View.GONE);
         }
+        if (this.progressBar.isShowing())
+            this.progressBar.dismiss();
         showToast("开始抓包失败");
         //判断失败原因
     }
@@ -93,23 +105,27 @@ public class NetworkActivity extends BaseActivity
         Log.d(TAG,"onStartSuccess:status="+this.status);
         this.captureBtn.setText(R.string.stop_capture);
         this.captureBtn.setTextColor(Color.RED);
-        showToast("抓包中,请按结束获取信息");
 
-        String ootConnectType=DataManager.getInstance().getOotConnectType();
-        if(CommonField.DHCP.equals(ootConnectType) || CommonField.BRIDGE.equals(ootConnectType)){
-            WebHttpUtils.getInstance().setDHCP(this, GET_SET_DHCP);
-        }else if(CommonField.STATICIP.equals(ootConnectType)){
-            String staticIpString = DataManager.getInstance().getStaticIP();
-            String staticGateString=DataManager.getInstance().getStaticGate();
-            String staticDnsString=DataManager.getInstance().getStaticDNS();
-            String staticSubnetString=DataManager.getInstance().getStaticSubNet();
-            WebHttpUtils.getInstance().setStaticIP(staticIpString, staticGateString, staticDnsString, staticSubnetString, this, GET_SET_STATIC);
-        }else if(CommonField.PPPOE.equals(ootConnectType)){
-            String userName=DataManager.getInstance().getPppoeUser();
-            String password=DataManager.getInstance().getPppoePwd();
-            WebHttpUtils.getInstance().setPPPoe(userName, password, this, GET_SET_PPPOE);
+        if(this.resetConnection.isChecked()){
+            String ootConnectType=DataManager.getInstance().getOotConnectType();
+            if(CommonField.DHCP.equals(ootConnectType) || CommonField.BRIDGE.equals(ootConnectType)){
+                WebHttpUtils.getInstance().setDHCP(this, GET_SET_DHCP);
+            }else if(CommonField.STATICIP.equals(ootConnectType)){
+                String staticIpString = DataManager.getInstance().getStaticIP();
+                String staticGateString=DataManager.getInstance().getStaticGate();
+                String staticDnsString=DataManager.getInstance().getStaticDNS();
+                String staticSubnetString=DataManager.getInstance().getStaticSubNet();
+                WebHttpUtils.getInstance().setStaticIP(staticIpString, staticGateString, staticDnsString, staticSubnetString, this, GET_SET_STATIC);
+            }else if(CommonField.PPPOE.equals(ootConnectType)){
+                String userName=DataManager.getInstance().getPppoeUser();
+                String password=DataManager.getInstance().getPppoePwd();
+                WebHttpUtils.getInstance().setPPPoe(userName, password, this, GET_SET_PPPOE);
+            }
         }
 
+        if (this.progressBar.isShowing())
+            this.progressBar.dismiss();
+        showToast("抓包中,请按结束获取信息");
     }
     @Override
     public void onGetCaptureFileSuccess(int paramInt) {
@@ -118,6 +134,7 @@ public class NetworkActivity extends BaseActivity
             this.progressBar.dismiss();
         this.captureBtn.setText(R.string.start_capture);
         this.captureBtn.setTextColor(Color.WHITE);
+        this.resetConnection.setEnabled(true);
         countHandler.removeCallbacks(runnable);
         if(this.fileLayout.getVisibility()==View.VISIBLE){
             this.fileLayout.setVisibility(View.GONE);
@@ -136,6 +153,7 @@ public class NetworkActivity extends BaseActivity
         }
         if (this.progressBar.isShowing())
             this.progressBar.dismiss();
+        this.resetConnection.setEnabled(true);
     }
 
     @Override
@@ -145,11 +163,20 @@ public class NetworkActivity extends BaseActivity
         showToast("抓包成功！！");
         Log.d(TAG,"paramString="+paramString);
         if (this.status == CAPTUREING) {
-
-            String filePath = paramString;
+            this.filePath = paramString;
             Log.d(TAG, "onStartSuccess:filePath=" + filePath);
-            this.presenter.getCaptureFile(filePath,CommonField.CAPTURE_FILE_DIR);
-
+            Log.d(TAG, "onStartSuccess:fileName=" + fileName+"/DataManager.getInstance().getMschapErrcode()="+DataManager.getInstance().getMschapErrcode());
+            if(this.resetConnection.isChecked()){
+                SharedPreferences captureHttpCode=getSharedPreferences(CAPTURE_HTTP_CODE, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor=captureHttpCode.edit();
+                editor.putString(this.fileName,DataManager.getInstance().getMschapErrcode());
+                editor.commit();
+                Log.d(TAG, "captureHttpCode.getString(this.fileName,null)=" + captureHttpCode.getString(this.fileName,null));
+            }
+            this.presenter.getCaptureFile(this.filePath,CommonField.CAPTURE_FILE_DIR);
+            this.progressBar.setMessage("下载数据包....");
+            if (!this.progressBar.isShowing())
+                this.progressBar.show();
         } else {
             //capture finished by button
         }
@@ -166,6 +193,8 @@ public class NetworkActivity extends BaseActivity
         this.fileLayout=paramView.findViewById(R.id.capture_file);
         this.captureTime=paramView.findViewById(R.id.capture_time);
 
+        this.resetConnection=paramView.findViewById(R.id.switch_reset_connection);
+
         this.captureBtn = paramView.findViewById(R.id.start_capture);
         this.uploadBtn = paramView.findViewById(R.id.upload_capture);
         this.deleteBtn = paramView.findViewById(R.id.delete_captrue_file);
@@ -174,6 +203,8 @@ public class NetworkActivity extends BaseActivity
 
     @Override
     public void initData() {
+
+
         title.setText(getString(R.string.captrue_file_title));
         if (this.progressBar == null)
         {
@@ -243,6 +274,7 @@ public class NetworkActivity extends BaseActivity
 
     @Override
     public void widgetClick(View paramView) {
+        Log.d(TAG,"this.status="+this.status);
         switch (paramView.getId())
         {
             case R.id.vixtel_btn_back:
@@ -261,20 +293,33 @@ public class NetworkActivity extends BaseActivity
                 if(this.status==CAPTURE_READY || this.status==CAPTURE_FINISH){
                     this.status=CAPTUREING;
                     Toast.makeText(this, "开始测试，点击结束查看结果", Toast.LENGTH_SHORT).show();
-                    long l2 = System.currentTimeMillis();
+                    SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMddHHmmss");
+
                     int j = (int)(1000.0D * Math.random());
-                    String fn=DataManager.getInstance().getAccount()+"_"+l2+j;
+                    String fn=DataManager.getInstance().getAccount()+"_"+sdf.format(new Date())+j;
+                    this.fileName=fn;
                     this.presenter.start(fn);
+
+                    this.resetConnection.setEnabled(false);
+                    this.progressBar.setMessage("请求开始抓包....");
+                    if (!this.progressBar.isShowing())
+                        this.progressBar.show();
+
                     this.captureBtn.setText(R.string.stop_capture);
                     this.captureBtn.setTextColor(Color.RED);
                     this.fileLayout.setVisibility(View.VISIBLE);
                     captureTime.setText("");
                     countHandler.postDelayed(runnable,1000);
                 }else if(this.status==CAPTUREING){
-                    this.progressBar.setMessage("处理数据中....");
-                    if (!this.progressBar.isShowing())
-                        this.progressBar.show();
-                    this.presenter.stop();
+//                    if(OTTProperty.getInstance().isAllowedStopCapture()){
+                        this.progressBar.setMessage("处理数据中....");
+                        if (!this.progressBar.isShowing())
+                            this.progressBar.show();
+                        this.presenter.stop();
+//                    }else{
+
+//                    }
+
 
                 }
 
@@ -312,11 +357,16 @@ public class NetworkActivity extends BaseActivity
     }
 
     private void uploadCaptureFiles(){
+        SharedPreferences captureHttpCode=getSharedPreferences(CAPTURE_HTTP_CODE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor=captureHttpCode.edit();
         final LinkedList selectedList=new LinkedList();
         for(int i=0;i<this.data.size();i++){
             CaptureFileBean cfb = this.data.get(i);
             if (cfb.isSelector()){
                 Log.d(TAG,"cfb.getFilePath()="+cfb.getFilePath());
+                Log.d(TAG,"uploadCaptureFiles:cfb.getFileName()="+cfb.getFileName());
+                editor.remove(cfb.getFileName().replace(".pcap",""));
+                editor.commit();
                 selectedList.add(new File(cfb.getFilePath()));
             }
         }
@@ -358,11 +408,16 @@ public class NetworkActivity extends BaseActivity
 
 
     private void deleteFiles(){
+        SharedPreferences captureHttpCode=getSharedPreferences(CAPTURE_HTTP_CODE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor=captureHttpCode.edit();
         for(int i=0;i<this.data.size();i++){
             CaptureFileBean cfb = this.data.get(i);
             if (cfb.isSelector()){
                 File localFile1 = new File(cfb.getFilePath());
                 if (localFile1.exists()){
+                    Log.d(TAG,"deleteFiles:localFile1.getName()="+localFile1.getName());
+                    editor.remove(localFile1.getName().replace(".pcap",""));
+                    editor.commit();
                     localFile1.delete();
                 }
             }
@@ -422,7 +477,13 @@ public class NetworkActivity extends BaseActivity
 
     @Override
     public void onErrorNetClient(int paramInt, String paramString) {
-
+        switch (paramInt){
+            case GET_CAPTURE_FILE_ID:
+                this.presenter.getCaptureFile(this.filePath,CommonField.CAPTURE_FILE_DIR);
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
@@ -464,5 +525,13 @@ public class NetworkActivity extends BaseActivity
     protected void onDestroy() {
         countHandler.removeCallbacks(runnable);
         super.onDestroy();
+    }
+
+    public Switch getResetConnection() {
+        return resetConnection;
+    }
+
+    public void setResetConnection(Switch resetConnection) {
+        this.resetConnection = resetConnection;
     }
 }

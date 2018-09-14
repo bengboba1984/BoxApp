@@ -126,7 +126,7 @@ public class CustomActivity extends BaseActivity implements INetNotify {
                     DataManager.getInstance().setStbID(strSTB);
                 }
                 this.progressBar.setMessage("设置宽带账号/STB");
-                if (this.progressBar.isShowing())
+                if (!this.progressBar.isShowing())
                     this.progressBar.show();
                 WebHttpUtils.getInstance().setAccount(this, SET_ACCOUNT_ID, strAccount);
                 break;

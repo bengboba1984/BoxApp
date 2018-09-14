@@ -22,4 +22,6 @@ public interface LoginConstant {
     public static final String PASSWORD = "password";
     public static final String UNIT = "unit";
     public static final String USERNAME = "username";
+    public static final String LOGIN_INFO = "login_info";
+
 }

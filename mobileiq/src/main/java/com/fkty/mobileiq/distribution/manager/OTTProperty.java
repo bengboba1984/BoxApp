@@ -24,7 +24,7 @@ public class OTTProperty implements ICoreListener {
 
     @Override
     public boolean onCoreMessage(String paramString) {
-        Log.d("OTTProperty","onCoreMessage");
+//        Log.d("OTTProperty","onCoreMessage="+paramString);
 //        paramString="{'configResult': " +
 //                "{'BoxDeviceInfo': " +
 //                "{'userName': 1,'cpu': 2,'hardDisk': 3,'deviceSeq': 4,'memory': 5,'ipAddress': 6,'gateway': 4,'subNetMask': 5,'dns': 6}" +
@@ -53,6 +53,7 @@ public class OTTProperty implements ICoreListener {
                     DataManager.getInstance().setStaticGate(boxDeviceInfoJSON.optString("gateway"));
                     DataManager.getInstance().setStaticSubNet(boxDeviceInfoJSON.optString("subNetMask"));
                     DataManager.getInstance().setStaticDNS(boxDeviceInfoJSON.optString("dns"));
+                    DataManager.getInstance().setMschapErrcode(boxDeviceInfoJSON.optString("mschapErrcode"));
                 }
                 return true;
             } catch (JSONException e) {

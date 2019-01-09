@@ -185,6 +185,7 @@ public class OttConnectActivity extends BaseActivity
             default:
                 break;
             case GET_SET_PPPOE:
+                Log.d("error:","paramString="+paramString);
                 showToast("设置PPPOE拨号错误,错误信息：" + paramString);
                 break;
             case GET_SET_STATIC:
@@ -386,6 +387,7 @@ public class OttConnectActivity extends BaseActivity
                         WebHttpUtils.getInstance().setPPPoe(this.ppoeUserString, this.ppoePwdString, this, GET_SET_PPPOE);
                     }else{
                         showToast("用户名或密码不能为空");
+                        break;
                     }
                 }else if((CommonField.STATICIP).equals(this.connectType)){
                     this.staticIpString = this.staticIPView.getEditText();
@@ -403,6 +405,7 @@ public class OttConnectActivity extends BaseActivity
                         WebHttpUtils.getInstance().setStaticIP(this.staticIpString, this.staticGateString, this.staticDnsString, this.staticSubnetString, this, GET_SET_STATIC);
                     }else{
                         showToast("静态Ip设置4项均不能为空");
+                        break;
                     }
                 }else if((CommonField.DHCP).equals(this.connectType)){
                     this.progressBar.setMessage("设置DHCP");

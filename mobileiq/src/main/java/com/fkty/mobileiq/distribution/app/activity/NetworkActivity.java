@@ -30,6 +30,7 @@ import com.fkty.mobileiq.distribution.http.INetNotify;
 import com.fkty.mobileiq.distribution.http.WebHttpUtils;
 import com.fkty.mobileiq.distribution.manager.DataManager;
 import com.fkty.mobileiq.distribution.manager.FTPManager;
+import com.fkty.mobileiq.distribution.manager.MWifiManager;
 import com.fkty.mobileiq.distribution.manager.OTTProperty;
 import com.fkty.mobileiq.distribution.manager.UploadProgressListener;
 import com.fkty.mobileiq.distribution.ui.adapter.CaptureFileListAdapter;
@@ -56,6 +57,7 @@ import static com.fkty.mobileiq.distribution.constant.NetWorkConstant.GET_CAPTUR
 
 public class NetworkActivity extends BaseActivity
         implements INetWorkView,INetNotify {
+    private final int BRIDGE_ON=1;
     private final int GET_SET_BRIDGE = 4;
     private final int GET_SET_DHCP = 3;
     private final int GET_SET_PPPOE = 1;
@@ -108,7 +110,7 @@ public class NetworkActivity extends BaseActivity
 
         if(this.resetConnection.isChecked()){
             String ootConnectType=DataManager.getInstance().getOotConnectType();
-            if(CommonField.DHCP.equals(ootConnectType) || CommonField.BRIDGE.equals(ootConnectType)){
+            if(CommonField.DHCP.equals(ootConnectType) ){
                 WebHttpUtils.getInstance().setDHCP(this, GET_SET_DHCP);
             }else if(CommonField.STATICIP.equals(ootConnectType)){
                 String staticIpString = DataManager.getInstance().getStaticIP();
@@ -120,6 +122,8 @@ public class NetworkActivity extends BaseActivity
                 String userName=DataManager.getInstance().getPppoeUser();
                 String password=DataManager.getInstance().getPppoePwd();
                 WebHttpUtils.getInstance().setPPPoe(userName, password, this, GET_SET_PPPOE);
+            }else if(CommonField.BRIDGE.equals(ootConnectType)){
+                WebHttpUtils.getInstance().setBridge(this, GET_SET_BRIDGE,BRIDGE_ON);
             }
         }
 
@@ -199,6 +203,21 @@ public class NetworkActivity extends BaseActivity
         this.uploadBtn = paramView.findViewById(R.id.upload_capture);
         this.deleteBtn = paramView.findViewById(R.id.delete_captrue_file);
 
+        if(MWifiManager.getIntance().isWifiConnect() && ((DataManager.getInstance().getAccount() != null) && (DataManager.getInstance().getAccount().length() >= 1))){
+            this.captureBtn.setBackgroundColor(getResources().getColor(R.color.btn_green));
+            this.captureBtn.setEnabled(true);
+        }else{
+            this.captureBtn.setEnabled(false);
+            this.captureBtn.setBackgroundColor(Color.GRAY);
+        }
+
+        if ( !MWifiManager.getIntance().isNetworkConnected() || CommonField.BRIDGE.equals(DataManager.getInstance().getOotConnectType())){
+            this.uploadBtn.setEnabled(false);
+            this.uploadBtn.setBackgroundColor(Color.GRAY);
+        }else{
+            this.uploadBtn.setEnabled(true);
+            this.uploadBtn.setBackgroundColor(getResources().getColor(R.color.btn_green));
+        }
     }
 
     @Override
@@ -374,7 +393,7 @@ public class NetworkActivity extends BaseActivity
             @Override
             public void run() {
                 try {
-                    FTPManager.getInstance().uploadMultiFile(selectedList, FTPConstant.REMOTE_PATH+"/capture", new UploadProgressListener() {
+                    FTPManager.getInstance().uploadMultiFile(selectedList, FTPConstant.REMOTE_PATH,"capture", new UploadProgressListener() {
                         @Override
                         public void onUploadProgress(int currentStep, long uploadSize, File file) {
                             if(currentStep==FTPConstant.FTP_UPLOAD_SUCCESS){
@@ -393,6 +412,13 @@ public class NetworkActivity extends BaseActivity
                                 int result = (int)(num * 100);
                                 uploadProgressBar.setProgress(result);
                                 Log.d(TAG, "-----upload---"+result + "%");
+                            }else if (currentStep==FTPConstant.FTP_CONNECT_FAIL){
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        uploadCaptureFileFailed();
+                                    }
+                                });
                             }
                         }
                     });
@@ -406,7 +432,9 @@ public class NetworkActivity extends BaseActivity
 
     }
 
-
+    private void uploadCaptureFileFailed() {
+        Toast.makeText(this, "上传失败，请查看网络(桥接模式无法上传FTP)", Toast.LENGTH_SHORT).show();
+    }
     private void deleteFiles(){
         SharedPreferences captureHttpCode=getSharedPreferences(CAPTURE_HTTP_CODE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor=captureHttpCode.edit();

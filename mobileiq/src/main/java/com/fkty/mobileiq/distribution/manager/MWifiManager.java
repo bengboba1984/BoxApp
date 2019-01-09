@@ -3,6 +3,7 @@ package com.fkty.mobileiq.distribution.manager;
 import android.content.Context;
 import android.content.SyncStatusObserver;
 import android.net.ConnectivityManager;
+import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
@@ -16,6 +17,8 @@ import com.fkty.mobileiq.distribution.DistributedMobileIQApplication;
 import com.fkty.mobileiq.distribution.common.SystemManager;
 import com.fkty.mobileiq.distribution.constant.CommonField;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.List;
 
@@ -40,19 +43,46 @@ public class MWifiManager {
         return connect2Wifi;
     }
 
-    private boolean isNetworkConnected(){
+    public boolean isNetworkConnected(){
+//        Log.d(TAG,"testing~~~~~~~~~~~~~~~~~~~`");
+//
+//        int ret=-999;
+//        Runtime runtime = Runtime.getRuntime();
+//        Process p=null;
+//        try {
+//            p = runtime.exec("ping -c 1 -w 1 -W 1 www.baidu.com");
+//            ret = p.waitFor();
+//            Log.i("Avalible", "Process:"+ret);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return false;
+//        }finally {
+//            if(p!=null)
+//                p.destroy();
+//        }
+//        if(ret==0){
+//            return true;
+//        }else{
+//            return false;
+//        }
+
+        if(CommonField.BRIDGE.equals(DataManager.getInstance().getOotConnectType())){
+            //桥接模式无法联网
+            return false;
+        }
         Context context=DistributedMobileIQApplication.getInstance();
         if(context!=null){
             ConnectivityManager cm= (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-//            System.out.println("step1:Build.VERSION.SDK_INT ="+Build.VERSION.SDK_INT );
+            if(cm == null){
+                return false;
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                System.out.println("step2");
                 NetworkCapabilities nc = cm.getNetworkCapabilities(cm.getActiveNetwork());
-                return nc.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
+                Log.d(TAG, "nc="+nc.toString());
+                return nc.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) && nc.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
             }else{
                 NetworkInfo info= cm.getActiveNetworkInfo();
-//                System.out.println("step3：info.getType()="+info.getType());
-                if(info!=null && info.getType()==ConnectivityManager.TYPE_WIFI){
+                if(info!=null && (info.getState()==NetworkInfo.State.CONNECTING || info.getState()==NetworkInfo.State.CONNECTED)){
                     return true;
                 }else{
                     return false;
@@ -62,7 +92,7 @@ public class MWifiManager {
         return false;
     }
 
-    public boolean isConnect()
+    public boolean isBoxConnectNetwork()
     {
         if(this.mWifiManager.getConnectionInfo().getSSID().contains(WIFI_NAME)){
             return isNetworkConnected();

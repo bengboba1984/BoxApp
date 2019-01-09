@@ -138,7 +138,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         this.userIcon.setImageResource(R.mipmap.icon_user);
         this.viewPager.setAdapter(this.adapter);
 //        this.progressBar.setMessage("获取测试模板中");
-        if (MWifiManager.getIntance().isConnect())
+        if (MWifiManager.getIntance().isBoxConnectNetwork())
         {
             CoreManager.getInstance().start();
             this.connectStatus.setVisibility(View.GONE);
@@ -189,7 +189,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
                 startActivity(UserInfoActivity.class);
                 break;
             case R.id.setting:
-                if (!MWifiManager.getIntance().isConnect())
+                if (!MWifiManager.getIntance().isBoxConnectNetwork())
                 {
                     showToast(getString(R.string.wifi_disconnect_tip));
                     break;
@@ -197,7 +197,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
                 startActivity(SettingActivity.class);
                 break;
             case R.id.userInfo:
-                if (!MWifiManager.getIntance().isConnect())
+                if (!MWifiManager.getIntance().isWifiConnect())
                 {
                     showToast(getString(R.string.wifi_disconnect_tip));
                     break;
@@ -217,7 +217,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
                 startActivity(localIntent);
                 break;
             case R.id.openTest:
-                if (!MWifiManager.getIntance().isConnect()){
+                if (!MWifiManager.getIntance().isBoxConnectNetwork()){
                     showToast(getString(R.string.wifi_disconnect_tip));
                     break;
                 }
@@ -235,7 +235,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
                 startActivity(NewOpenTestActivity.class);
                 break;
             case R.id.questionTest:
-                if (!MWifiManager.getIntance().isConnect()){
+                if (!MWifiManager.getIntance().isBoxConnectNetwork()){
                     showToast(getString(R.string.wifi_disconnect_tip));
                     break;
                 }
@@ -252,7 +252,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
                 startActivity(NewQuestionActivity.class);
                 break;
             case R.id.manualTest:
-                if (!MWifiManager.getIntance().isConnect()){
+                if (!MWifiManager.getIntance().isBoxConnectNetwork()){
                     showToast(getString(R.string.wifi_disconnect_tip));
                     break;
                 }
@@ -270,33 +270,32 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
                 startActivity(ManualActivity.class);
                 break;
             case R.id.networkTest:
-                if (!MWifiManager.getIntance().isWifiConnect()){
-                    showToast(getString(R.string.wifi_disconnect_tip1));
+                if (!MWifiManager.getIntance().isWifiConnect() && !MWifiManager.getIntance().isNetworkConnected() ){
+                    showToast(getString(R.string.wifi_disconnect_tip));
                     break;
                 }
-//                Log.d(TAG,"++++++++++++++++++"+DataManager.getInstance().getAccount());
-                if ((DataManager.getInstance().getAccount() == null) || (DataManager.getInstance().getAccount().length() < 1)){
-                    showToast(getString(R.string.account_null));
-                    startActivity(CustomActivity.class);
-                    break;
-                }
+//                if ((DataManager.getInstance().getAccount() == null) || (DataManager.getInstance().getAccount().length() < 1)){
+//                    showToast(getString(R.string.account_null));
+//                    startActivity(CustomActivity.class);
+//                    break;
+//                }
                 startActivity(NetworkActivity.class);
                 break;
             case R.id.videoTest:
-                if (!MWifiManager.getIntance().isWifiConnect()){
-                    showToast(getString(R.string.wifi_disconnect_tip1));
+                if (!MWifiManager.getIntance().isWifiConnect() && !MWifiManager.getIntance().isNetworkConnected() ){
+                    showToast(getString(R.string.wifi_disconnect_tip));
                     break;
                 }
-                if ((DataManager.getInstance().getStbID() == null) || (DataManager.getInstance().getStbID().length() < 1)){
-                    showToast(getString(R.string.STB_null));
-                    startActivity(CustomActivity.class);
-                    break;
-                }
-                if(!CommonField.BRIDGE.equals(DataManager.getInstance().getOotConnectType())){
-                    showToast(getString(R.string.not_bridge));
-                    startActivity(SettingOTTActivity.class);
-                    break;
-                }
+//                if ((DataManager.getInstance().getStbID() == null) || (DataManager.getInstance().getStbID().length() < 1)){
+//                    showToast(getString(R.string.STB_null));
+//                    startActivity(CustomActivity.class);
+//                    break;
+//                }
+//                if(!CommonField.BRIDGE.equals(DataManager.getInstance().getOotConnectType())){
+//                    showToast(getString(R.string.not_bridge));
+//                    startActivity(SettingOTTActivity.class);
+//                    break;
+//                }
                 startActivity(VideoTestActivity.class);
                 break;
         }
@@ -365,8 +364,8 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     protected void onRestart()
     {
         super.onRestart();
-        Log.d(TAG,"onRestart:isConnect="+MWifiManager.getIntance().isConnect());
-        if (MWifiManager.getIntance().isConnect())
+        Log.d(TAG,"onRestart:isConnect="+MWifiManager.getIntance().isBoxConnectNetwork());
+        if (MWifiManager.getIntance().isBoxConnectNetwork())
         {
             CoreManager.getInstance().start();
             this.connectStatus.setVisibility(View.GONE);
@@ -380,5 +379,10 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
             return;
         }
         this.connectStatus.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onFailedNetClient(int paramInt, String paramString) {
+
     }
 }

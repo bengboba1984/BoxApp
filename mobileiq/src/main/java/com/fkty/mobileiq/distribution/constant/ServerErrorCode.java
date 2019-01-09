@@ -21,6 +21,17 @@ public class ServerErrorCode {
     public static final int ERROR_CODE_TEST_ALREADY_START = 2;
     public static final int ERROR_CODE_INVALID_PARAMETER = 2;
     public static final int ERROR_CODE_ALREADY_TESTING = 14;
+    public static final String MSCHAP_ERROR_CODE_1= String.valueOf(-3);
+    public static final String MSCHAP_ERROR_CODE_2= String.valueOf(-2);
+    public static final String MSCHAP_ERROR_CODE_3= String.valueOf(-1);
+    public static final String MSCHAP_ERROR_CODE_4= String.valueOf(0);
+    public static final String MSCHAP_ERROR_CODE_5= String.valueOf(646);
+    public static final String MSCHAP_ERROR_CODE_6= String.valueOf(647);
+    public static final String MSCHAP_ERROR_CODE_7= String.valueOf(648);
+    public static final String MSCHAP_ERROR_CODE_8= String.valueOf(649);
+    public static final String MSCHAP_ERROR_CODE_9= String.valueOf(691);
+
+
 
 
 }

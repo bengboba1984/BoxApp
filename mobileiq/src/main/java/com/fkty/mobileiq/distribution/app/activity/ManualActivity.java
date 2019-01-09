@@ -403,4 +403,9 @@ public class ManualActivity extends BaseActivity
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void onFailedNetClient(int paramInt, String paramString) {
+
+    }
 }

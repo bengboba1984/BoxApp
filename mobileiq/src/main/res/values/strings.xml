@@ -81,5 +81,6 @@
     <string name="STB_null">请先设置STB ID</string>
     <string name="not_bridge">请先设为桥接模式</string>
     <string name="ott_setting_ssid">修改盒子wifi名称</string>
+    <string name="network_disconnect_tip">盒子未联网</string>
 
 </resources>

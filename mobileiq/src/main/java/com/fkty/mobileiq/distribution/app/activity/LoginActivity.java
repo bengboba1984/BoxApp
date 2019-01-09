@@ -321,4 +321,9 @@ public class LoginActivity extends BaseActivity implements ILoginView, LoginCons
 //            return true;
 //        }
     }
+
+    @Override
+    public void onFailedNetClient(int paramInt, String paramString) {
+
+    }
 }

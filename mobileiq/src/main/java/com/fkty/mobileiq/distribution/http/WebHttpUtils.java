@@ -82,6 +82,8 @@ public class WebHttpUtils implements Runnable{
             setBridgeTask();
         }else if (("set_pppoe").equals(str)){
             setPPPOETask();
+        }else if (("exit_pppoe").equals(str)){
+            exitPPPOETask();
         }else if (("set_staticip").equals(str)){
             setStaticIPTask();
         }else if(("set_account").equals(str)){
@@ -436,6 +438,8 @@ public class WebHttpUtils implements Runnable{
 
     public void setDHCPTask()
     {
+        Log.d("WebHttpUtils","setDHCPTask:url="+WebServerConstant.WEB_GET_SET_DHCP);
+
         ((GetBuilder)((GetBuilder)OkHttpUtils.get().url(WebServerConstant.WEB_GET_SET_DHCP)).id(this.id)).build().execute(new StringCallback()
         {
             public void onError(Call paramCall, Exception paramException, int paramInt)
@@ -446,7 +450,7 @@ public class WebHttpUtils implements Runnable{
 
             public void onResponse(String paramString, int paramInt)
             {
-
+                DataManager.getInstance().setOotConnectType(CommonField.DHCP);
                 if (WebHttpUtils.this.notify != null)
                     WebHttpUtils.this.notify.onSuccessNetClient(paramInt, paramString);
             }
@@ -490,7 +494,7 @@ public class WebHttpUtils implements Runnable{
 
     public void setPPPOETask()
     {
-        ((GetBuilder)((GetBuilder)OkHttpUtils.get().url(WebServerConstant.WEB_GET_SET_PPPOE + "?userName=" + this.pppoeUser + "&passWord=" + this.pppoePwd)).id(this.id)).build().execute(new StringCallback()
+        ((GetBuilder)((GetBuilder)OkHttpUtils.get().url(WebServerConstant.WEB_GET_SET_PPPOE + "?userName=" + this.pppoeUser + "&password=" + this.pppoePwd)).id(this.id)).build().execute(new StringCallback()
         {
             public void onError(Call paramCall, Exception paramException, int paramInt)
             {
@@ -500,6 +504,7 @@ public class WebHttpUtils implements Runnable{
 
             public void onResponse(String paramString, int paramInt)
             {
+                DataManager.getInstance().setOotConnectType(CommonField.PPPOE);
                 if (WebHttpUtils.this.notify != null)
                     WebHttpUtils.this.notify.onSuccessNetClient(paramInt, paramString);
             }
@@ -522,6 +527,38 @@ public class WebHttpUtils implements Runnable{
         this.thread.start();
         return true;
     }
+    public void exitPPPOETask()
+    {
+        ((GetBuilder)((GetBuilder)OkHttpUtils.get().url(WebServerConstant.WEB_GET_SET_PPPOE + "?disable" )).id(this.id)).build().execute(new StringCallback()
+        {
+            public void onError(Call paramCall, Exception paramException, int paramInt)
+            {
+                if (WebHttpUtils.this.notify != null)
+                    WebHttpUtils.this.notify.onErrorNetClient(paramInt, paramException.getMessage());
+            }
+
+            public void onResponse(String paramString, int paramInt)
+            {
+                if (WebHttpUtils.this.notify != null)
+                    WebHttpUtils.this.notify.onSuccessNetClient(paramInt, paramString);
+            }
+        });
+    }
+    public boolean exitPPPoe(INetNotify paramINetNotify, int paramInt)
+    {
+        if (this.thread != null)
+        {
+            if (this.thread.isAlive())
+                return false;
+            this.thread = null;
+        }
+        this.id = paramInt;
+        this.notify = paramINetNotify;
+        this.thread = new Thread(this, "exit_pppoe");
+        this.thread.start();
+        return true;
+    }
+
     public boolean setStaticIP(String staticIpP, String staticGateP, String staticDnsP, String staticSubnetP, INetNotify paramINetNotify, int paramInt)
     {
         if (this.thread != null)

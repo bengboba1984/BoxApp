@@ -1,5 +1,7 @@
 package com.fkty.mobileiq.distribution.app.activity;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -27,6 +29,7 @@ import com.fkty.mobileiq.distribution.http.INetNotify;
 import com.fkty.mobileiq.distribution.http.WebHttpUtils;
 import com.fkty.mobileiq.distribution.manager.DataManager;
 import com.fkty.mobileiq.distribution.manager.FTPManager;
+import com.fkty.mobileiq.distribution.manager.MWifiManager;
 import com.fkty.mobileiq.distribution.manager.OTTProperty;
 import com.fkty.mobileiq.distribution.manager.UploadProgressListener;
 import com.fkty.mobileiq.distribution.ui.adapter.CaptureFileListAdapter;
@@ -48,9 +51,8 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
     private final int GET_SET_BRIDGE = 4;
     private final int BRIDGE_ON = 1;
     private final int BRIDGE_OFF = 0;
+    private int BRIDGE_ACTION=-1;
     private final int GET_SET_DHCP = 3;
-    private final int GET_SET_PPPOE = 1;
-    private final int GET_SET_STATIC = 2;
     private TextView title;
     private ImageView backImg;
     File fileDir = new File(CommonField.VIDEO_FILE_DIR);
@@ -70,6 +72,7 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
     private ProgressDialog uploadProgressBar;
     private TextView captureTime;
     private LinearLayout fileLayout;
+    private boolean needExitBridge=true;
 
     public void onStartFailed(int paramInt, Bundle paramBundle) {
         this.status=CAPTURE_READY;
@@ -157,6 +160,24 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
         this.uploadBtn = paramView.findViewById(R.id.upload_capture);
         this.deleteBtn = paramView.findViewById(R.id.delete_captrue_file);
 
+        if(MWifiManager.getIntance().isWifiConnect()
+                && ((DataManager.getInstance().getStbID() != null) && (DataManager.getInstance().getStbID().length() >= 1))
+//                && CommonField.BRIDGE.equals(DataManager.getInstance().getOotConnectType())
+                ){
+            this.captureBtn.setBackgroundColor(getResources().getColor(R.color.btn_green));
+            this.captureBtn.setEnabled(true);
+        }else{
+            this.captureBtn.setEnabled(false);
+            this.captureBtn.setBackgroundColor(Color.GRAY);
+        }
+
+        if ( !MWifiManager.getIntance().isNetworkConnected() || CommonField.BRIDGE.equals(DataManager.getInstance().getOotConnectType())){
+            this.uploadBtn.setEnabled(false);
+            this.uploadBtn.setBackgroundColor(Color.GRAY);
+        }else{
+            this.uploadBtn.setEnabled(true);
+            this.uploadBtn.setBackgroundColor(getResources().getColor(R.color.btn_green));
+        }
     }
 
     @Override
@@ -235,7 +256,7 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
         switch (paramView.getId())
         {
             case R.id.vixtel_btn_back:
-                finish();
+                actionBeforeExit();
                 break;
             case R.id.network_selector_all:
                 if(data!=null && data.size()>0){
@@ -255,7 +276,17 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
                     this.fileLayout.setVisibility(View.VISIBLE);
                     captureTime.setText("");
                     countHandler.postDelayed(runnable,1000);
-                    WebHttpUtils.getInstance().setBridge(this, GET_SET_BRIDGE,BRIDGE_ON);
+
+                    if(CommonField.BRIDGE.equals(DataManager.getInstance().getOotConnectType())){
+                        SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMddHHmmss");
+                        int j = (int)(1000.0D * Math.random());
+                        String fn= DataManager.getInstance().getStbID()+"_"+sdf.format(new Date())+j;
+                        this.presenter.start(fn);
+                    }else{
+                        BRIDGE_ACTION=BRIDGE_ON;
+                        WebHttpUtils.getInstance().setBridge(this, GET_SET_BRIDGE,BRIDGE_ON);
+                    }
+
 
                 }else if(this.status==CAPTUREING){
                     if(OTTProperty.getInstance().isAllowedStopCapture()){
@@ -275,6 +306,10 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
                 deleteFiles();
                 break;
             case R.id.upload_capture:
+                if(CommonField.BRIDGE.equals(DataManager.getInstance().getOotConnectType())){
+                    showToast("网桥模式无法上传FTP！");
+                    break;
+                }
                 uploadCaptureFiles();
                 break;
             default:
@@ -295,7 +330,7 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
             @Override
             public void run() {
                 try {
-                    FTPManager.getInstance().uploadMultiFile(selectedList, FTPConstant.REMOTE_PATH+"/video", new UploadProgressListener() {
+                    FTPManager.getInstance().uploadMultiFile(selectedList, FTPConstant.REMOTE_PATH,"video", new UploadProgressListener() {
                         @Override
                         public void onUploadProgress(int currentStep, long uploadSize, File file) {
                             if(currentStep==FTPConstant.FTP_UPLOAD_SUCCESS){
@@ -314,11 +349,26 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
                                 int result = (int)(num * 100);
                                 uploadProgressBar.setProgress(result);
                                 Log.d(TAG, "-----upload---"+result + "%");
+                            }else if(currentStep==FTPConstant.FTP_UPLOAD_FAIL){
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        uploadCaptureFileFailed();
+                                    }
+                                });
+                            }else if(currentStep==FTPConstant.FTP_CONNECT_FAIL){
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        uploadCaptureFileFailed();
+                                    }
+                                });
                             }
                         }
                     });
                 } catch (IOException e) {
                     e.printStackTrace();
+//                    uploadCaptureFileFailed();
                 }
 
             }
@@ -390,18 +440,32 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
         Toast.makeText(this, "上传平台成功", Toast.LENGTH_SHORT).show();
         initFileList();
     }
-
+    private void uploadCaptureFileFailed() {
+        Toast.makeText(this, "上传失败，请查看网络(桥接模式无法上传FTP)", Toast.LENGTH_SHORT).show();
+    }
     @Override
     public void onErrorNetClient(int paramInt, String paramString) {
         Log.d(TAG,paramString);
-        Toast.makeText(this, "无法设为桥接模式！", Toast.LENGTH_SHORT).show();
-        this.captureBtn.setText(R.string.start_capture);
-        this.captureBtn.setTextColor(Color.WHITE);
-        countHandler.removeCallbacks(runnable);
-        if(this.fileLayout.getVisibility()==View.VISIBLE){
-            this.fileLayout.setVisibility(View.GONE);
+        switch (paramInt){
+            case GET_SET_BRIDGE:
+                if(BRIDGE_ACTION==BRIDGE_ON){
+                    Toast.makeText(this, "无法设为桥接模式！", Toast.LENGTH_SHORT).show();
+                    this.captureBtn.setText(R.string.start_capture);
+                    this.captureBtn.setTextColor(Color.WHITE);
+                    countHandler.removeCallbacks(runnable);
+                    if(this.fileLayout.getVisibility()==View.VISIBLE){
+                        this.fileLayout.setVisibility(View.GONE);
+                    }
+                    this.status=CAPTURE_FINISH;
+                }else if(BRIDGE_ACTION==BRIDGE_OFF){
+                    if (progressBar.isShowing())
+                        progressBar.dismiss();
+                    Toast.makeText(this, "退出桥接模式失败！请至网络设置页面再行设置", Toast.LENGTH_SHORT).show();
+                    startActivity(SettingOTTActivity.class);
+                    finish();
+                }
+                break;
         }
-        this.status=CAPTURE_FINISH;
     }
 
     @Override
@@ -411,19 +475,26 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
 
     @Override
     public void onSuccessNetClient(int paramInt, String paramString) {
-        DataManager.getInstance().setOotConnectType(CommonField.BRIDGE);
-        Toast.makeText(this, "开始测试，点击结束查看结果", Toast.LENGTH_SHORT).show();
-        SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMddHHmmss");
-//        long l2 = System.currentTimeMillis();
-        int j = (int)(1000.0D * Math.random());
-        String fn= DataManager.getInstance().getStbID()+"_"+sdf.format(new Date())+j;
-        this.presenter.start(fn);
-//        this.captureBtn.setText(R.string.stop_capture);
-//        this.captureBtn.setText(R.string.stop_capture);
-//        this.captureBtn.setTextColor(Color.RED);
-//        this.fileLayout.setVisibility(View.VISIBLE);
-//        captureTime.setText("");
-//        countHandler.postDelayed(runnable,1000);
+        switch (paramInt){
+            case GET_SET_BRIDGE:
+                if(BRIDGE_ACTION==BRIDGE_ON){
+                    DataManager.getInstance().setOotConnectType(CommonField.BRIDGE);
+                    Toast.makeText(this, "盒子已切换成桥接模式！点击结束查看结果", Toast.LENGTH_SHORT).show();
+                    SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMddHHmmss");
+                    int j = (int)(1000.0D * Math.random());
+                    String fn= DataManager.getInstance().getStbID()+"_"+sdf.format(new Date())+j;
+                    this.presenter.start(fn);
+                }else if(BRIDGE_ACTION==BRIDGE_OFF){
+                    WebHttpUtils.getInstance().setDHCP(this, GET_SET_DHCP);
+                }
+                break;
+            case GET_SET_DHCP:
+                if (progressBar.isShowing())
+                    progressBar.dismiss();
+                finish();
+                break;
+        }
+
     }
 
     Handler countHandler=new Handler();
@@ -453,8 +524,37 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
 
     @Override
     protected void onDestroy() {
-        countHandler.removeCallbacks(runnable);
-        WebHttpUtils.getInstance().setBridge(this, GET_SET_BRIDGE,BRIDGE_OFF);
+
         super.onDestroy();
+    }
+
+    private void actionBeforeExit(){
+        countHandler.removeCallbacks(runnable);
+        if(CommonField.BRIDGE.equals(DataManager.getInstance().getOotConnectType()) && needExitBridge){
+            Dialog upgradeDialog=new AlertDialog.Builder(this).setTitle("固件升级")
+                    .setMessage("是否退出桥接模式？")
+                    .setPositiveButton("是", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            progressBar.setMessage("退出桥接模式.......");
+                            if (!progressBar.isShowing())
+                                progressBar.show();
+                            BRIDGE_ACTION=BRIDGE_OFF;
+                            WebHttpUtils.getInstance().setBridge(VideoTestActivity.this, GET_SET_BRIDGE,BRIDGE_OFF);
+
+                        }
+                    }).setNegativeButton("否", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            needExitBridge=false;
+                            finish();
+                        }
+                    }).create();
+            upgradeDialog.show();
+
+        }else{
+            finish();
+        }
+
     }
 }

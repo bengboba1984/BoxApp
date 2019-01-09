@@ -1,5 +1,7 @@
 package com.fkty.mobileiq.distribution.manager;
 
+import android.util.Log;
+
 import com.fkty.mobileiq.distribution.constant.CommonField;
 import com.fkty.mobileiq.distribution.constant.FTPConstant;
 
@@ -92,7 +94,7 @@ public class FTPManager {
         this.uploadAfterOperate(listener);
     }
 
-    public void uploadMultiFile(LinkedList<File> fileList, String remotePath,
+    public void uploadMultiFile(LinkedList<File> fileList, String remotePath,String functionName,
                                 UploadProgressListener listener) throws IOException {
 
         // 上传之前初始化
@@ -101,6 +103,31 @@ public class FTPManager {
         boolean flag;
 
         for (File singleFile : fileList) {
+
+            String fileName=singleFile.getName();
+            Log.d("FTPManager","uploadMultiFile:fileName="+fileName);
+            String[] fileNameParts;
+            if(fileName!=null && !"".equals(fileName)){
+                fileNameParts=fileName.split("_");
+                if(fileNameParts!=null && fileNameParts.length>1 && fileNameParts[0]!=null && !"".equals(fileNameParts[0])){
+//                    String[] rp=remotePath.split("/");
+                    Log.d("FTPManager","uploadMultiFile:"+fileNameParts[0]);
+                    boolean isFlag=ftpClient.makeDirectory(fileNameParts[0]);
+//                    Log.d("FTPManager","makeDirectory:"+isFlag);
+                    isFlag=ftpClient.changeWorkingDirectory(fileNameParts[0]);
+//                    Log.d("FTPManager","changeWorkingDirectory:"+isFlag);
+//                    Log.d("FTPManager","uploadMultiFile:"+functionName);
+                    isFlag=ftpClient.makeDirectory(functionName);
+//                    Log.d("FTPManager","makeDirectory:"+isFlag);
+                    isFlag=ftpClient.changeWorkingDirectory(functionName);
+//                    Log.d("FTPManager","changeWorkingDirectory:"+isFlag);
+                }else{
+                    ftpClient.makeDirectory(functionName);
+                    ftpClient.changeWorkingDirectory(functionName);
+                }
+
+            }
+
             flag = uploadingSingle(singleFile, listener);
             if (flag) {
                 listener.onUploadProgress(FTPConstant.FTP_UPLOAD_SUCCESS, 0,
@@ -109,6 +136,7 @@ public class FTPManager {
                 listener.onUploadProgress(FTPConstant.FTP_UPLOAD_FAIL, 0,
                         singleFile);
             }
+            ftpClient.changeWorkingDirectory("/"+remotePath);
         }
 
         // 上传完成之后关闭连接
@@ -124,7 +152,7 @@ public class FTPManager {
             listener.onUploadProgress(FTPConstant.FTP_CONNECT_SUCCESSS, 0,
                     null);
         } catch (IOException e1) {
-            e1.printStackTrace();
+            Log.d("FTPManager","uploadBeforeOperate:"+e1.toString());
             listener.onUploadProgress(FTPConstant.FTP_CONNECT_FAIL, 0, null);
             return;
         }
@@ -134,7 +162,8 @@ public class FTPManager {
         // FTP下创建文件夹
         ftpClient.makeDirectory(remotePath);
         // 改变FTP目录
-        ftpClient.changeWorkingDirectory(remotePath);
+        Log.d("FTPManager","remotePath:"+"/"+remotePath);
+        ftpClient.changeWorkingDirectory("/"+remotePath);
         // 上传单个文件
 
     }
@@ -155,22 +184,29 @@ public class FTPManager {
     }
 
     public void openConnect() throws IOException {
+        Log.d("FTPManager","openConnect:"+"/"+1);
         // 中文转码
         ftpClient.setControlEncoding("UTF-8");
         int reply; // 服务器响应值
         // 连接至服务器
+        Log.d("FTPManager","openConnect:"+"/"+2);
         ftpClient.connect(FTPConstant.HOST_NAME, FTPConstant.PORT);
+        Log.d("FTPManager","openConnect:"+"/"+3);
         // 获取响应值
         reply = ftpClient.getReplyCode();
+        Log.d("FTPManager","openConnect:"+"/"+4);
         if (!FTPReply.isPositiveCompletion(reply)) {
             // 断开连接
             ftpClient.disconnect();
             throw new IOException("connect fail: " + reply);
         }
+        Log.d("FTPManager","openConnect:"+"/"+5);
         // 登录到服务器
         ftpClient.login(FTPConstant.USER_NAME, FTPConstant.PASSWORD);
+        Log.d("FTPManager","openConnect:"+"/"+6);
         // 获取响应值
         reply = ftpClient.getReplyCode();
+        Log.d("FTPManager","openConnect:"+"/"+!FTPReply.isPositiveCompletion(reply));
         if (!FTPReply.isPositiveCompletion(reply)) {
             // 断开连接
             ftpClient.disconnect();

@@ -141,4 +141,5 @@
     <item name="ssid_name" type="id">139</item>
     <item name="setting_ssid_btn" type="id">140</item>
     <item name="ssid_name_pre" type="id">141</item>
+    <item name="ott_disconnect_ppp_btn" type="id">145</item>
 </resources>

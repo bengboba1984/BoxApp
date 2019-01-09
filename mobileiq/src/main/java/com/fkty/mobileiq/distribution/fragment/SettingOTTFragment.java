@@ -13,6 +13,7 @@ import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,12 +43,15 @@ public class SettingOTTFragment extends Fragment implements View.OnClickListener
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private final int REBOOT = 2;
     private final int RESTORE = 1;
+    private final int GET_SET_DHCP = 3;
+    private final int EXIT_PPPOE = 1001;
     private OTTSettingAdapter connectAdapter;
     private List<OttSettingInfoBean> connectList;
     private OTTSettingAdapter deviceAdapter;
     private List<OttSettingInfoBean> deviceList;
     private MyListview ottConnectListView;
     private TextView ottConnectType;
+    private Button disconnectPPPBTN;
     private MyListview ottDeviceInfoListView;
     private TextView ottReset;
     private TextView ottRestart;
@@ -74,10 +78,18 @@ public class SettingOTTFragment extends Fragment implements View.OnClickListener
         this.ottRestart = this.view.findViewById(R.id.ott_restart);
         this.ottSSID = this.view.findViewById(R.id.ott_ssid);
         this.ottReviceConnect = this.view.findViewById(R.id.ott_connect_type_revise);
+        this.disconnectPPPBTN = this.view.findViewById(R.id.ott_disconnect_ppp_btn);
     }
 
     public void initData()
     {
+        if(CommonField.PPPOE.equals(DataManager.getInstance().getOotConnectType())
+                && ServerErrorCode.MSCHAP_ERROR_CODE_4.equals(DataManager.getInstance().getMschapErrcode())){
+            this.disconnectPPPBTN.setVisibility(View.VISIBLE);
+        }else{
+            this.disconnectPPPBTN.setVisibility(View.GONE);
+        }
+
         this.ottConnectType.setText(DataManager.getInstance().getOotConnectType());
         this.connectList = new ArrayList();
         if(CommonField.DHCP.equals(this.ottConnectType.getText())){
@@ -91,6 +103,7 @@ public class SettingOTTFragment extends Fragment implements View.OnClickListener
             localOttSettingInfoBean2.setName(getString(R.string.ott_setting_connect_pppoe_pwd));
             localOttSettingInfoBean2.setContent(DataManager.getInstance().getPppoePwd());
             this.connectList.add(localOttSettingInfoBean2);
+
         }else if(CommonField.STATICIP.equals(this.ottConnectType.getText())){
             OttSettingInfoBean localOttSettingInfoBean11 = new OttSettingInfoBean();
             localOttSettingInfoBean11.setName(getString(R.string.ott_setting_connect_static_ip));
@@ -152,6 +165,9 @@ public class SettingOTTFragment extends Fragment implements View.OnClickListener
         switch (paramView.getId())
         {
             default:
+                break;
+            case R.id.ott_disconnect_ppp_btn:
+                WebHttpUtils.getInstance().exitPPPoe(SettingOTTFragment.this, EXIT_PPPOE);
                 break;
             case R.id.ott_connect_type_revise:
                 startActivity(new Intent(getActivity(), OttConnectActivity.class));
@@ -218,6 +234,7 @@ public class SettingOTTFragment extends Fragment implements View.OnClickListener
         this.ottSSID.setOnClickListener(this);
         this.ottReset.setOnClickListener(this);
         this.ottReviceConnect.setOnClickListener(this);
+        this.disconnectPPPBTN.setOnClickListener(this);
         this.service = Executors.newSingleThreadScheduledExecutor();
         this.service.scheduleWithFixedDelay(this, 0, 1L, TimeUnit.SECONDS);
         return this.view;
@@ -246,6 +263,12 @@ public class SettingOTTFragment extends Fragment implements View.OnClickListener
             case REBOOT:
                 Toast.makeText(getActivity(), "重启盒子错误，错误信息：" + paramString, Toast.LENGTH_SHORT).show();
                 break;
+            case EXIT_PPPOE :
+                Toast.makeText(getActivity(), "退出PPPOE失败！：" + paramString, Toast.LENGTH_SHORT).show();
+                break;
+            case GET_SET_DHCP:
+                Toast.makeText(getActivity(), "设置DHCP失败！：" + paramString, Toast.LENGTH_SHORT).show();
+                break;
         }
 
     }
@@ -261,6 +284,12 @@ public class SettingOTTFragment extends Fragment implements View.OnClickListener
                 break;
             case REBOOT:
                 Toast.makeText(getActivity(), "重启盒子错误，错误信息：" + paramString, Toast.LENGTH_SHORT).show();
+                break;
+            case EXIT_PPPOE :
+                Toast.makeText(getActivity(), "退出PPPOE失败！：" + paramString, Toast.LENGTH_SHORT).show();
+                break;
+            case GET_SET_DHCP:
+                Toast.makeText(getActivity(), "设置DHCP失败！：" + paramString, Toast.LENGTH_SHORT).show();
                 break;
         }
     }
@@ -287,6 +316,23 @@ public class SettingOTTFragment extends Fragment implements View.OnClickListener
                         break;
                     case ServerErrorCode.ERROR_CODE_NOT_CREATE_FILE:
                         Toast.makeText(getActivity(), "创建临时文件失败", Toast.LENGTH_SHORT).show();
+                        break;
+                    case ServerErrorCode.ERROR_CODE_SUCCESS:
+                        switch (paramInt)
+                        {
+                            default:
+                                break;
+
+                            case EXIT_PPPOE :
+                                Toast.makeText(getActivity(), "PPPOE退出成功,将自动设置为DHCP!", Toast.LENGTH_SHORT).show();
+
+                                WebHttpUtils.getInstance().setDHCP(this, GET_SET_DHCP);
+                                break;
+                            case GET_SET_DHCP:
+                                Toast.makeText(getActivity(), "设置DHCP成功！", Toast.LENGTH_SHORT).show();
+                                break;
+                        }
+
                         break;
                 }
             } catch (JSONException e) {

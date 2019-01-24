@@ -27,7 +27,7 @@ import org.json.JSONObject;
  * Created by frank_tracy on 2017/12/5.
  */
 
-public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener, IBasicView,INetNotify {
+public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener, IBasicView {
     private final int ACTIVITY_CREATE = 0;
     private final int ACTIVITY_DESTROY = 1;
     private final int ACTIVITY_PAUSE = 2;
@@ -35,7 +35,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     private final int ACTIVITY_RESUME = 4;
     private final int ACTIVITY_START = 5;
     private final int ACTIVITY_STOP = 6;
-    private final int EXIT_PPPOE = 1001;
+//    private final int EXIT_PPPOE = 1001;
     protected final String TAG = getClass().getSimpleName();
     private int activityState;
     private boolean isAllowScreenRoate = false;
@@ -187,78 +187,78 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         return (int)(0.5F + paramFloat * paramContext.getResources().getDisplayMetrics().density);
     }
 
-    private long mExitTime;
-    //对返回键进行监听
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//    private long mExitTime;
+//    //对返回键进行监听
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//
+//        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+//            exit();
+//            return true;
+//        }
+//        return super.onKeyDown(keyCode, event);
+//    }
+//    //退出方法
+//    private void exit() {
+//        if ((System.currentTimeMillis() - mExitTime) > 2000) {
+//            Toast.makeText(this, "再按一次退出应用", Toast.LENGTH_SHORT).show();
+//            mExitTime = System.currentTimeMillis();
+//        } else {
+//            //用户退出处理
+//            WebHttpUtils.getInstance().exitPPPoe(this,EXIT_PPPOE);
+//
+//        }
+//    }
 
-        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-            exit();
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-    //退出方法
-    private void exit() {
-        if ((System.currentTimeMillis() - mExitTime) > 2000) {
-            Toast.makeText(this, "再按一次退出应用", Toast.LENGTH_SHORT).show();
-            mExitTime = System.currentTimeMillis();
-        } else {
-            //用户退出处理
-            WebHttpUtils.getInstance().exitPPPoe(this,EXIT_PPPOE);
+//    public void onErrorNetClient(int paramInt, String paramString)
+//    {
+//
+//        switch (paramInt){
+//            default:
+//                break;
+//            case EXIT_PPPOE:
+//                Log.d("error:","paramString="+paramString);
+//                showToast("退出PPPOE错误,错误信息：" + paramString);
+//                finish();
+//                System.exit(0);
+//                break;
+//        }
+//    }
 
-        }
-    }
-
-    public void onErrorNetClient(int paramInt, String paramString)
-    {
-
-        switch (paramInt){
-            default:
-                break;
-            case EXIT_PPPOE:
-                Log.d("error:","paramString="+paramString);
-                showToast("退出PPPOE错误,错误信息：" + paramString);
-                finish();
-                System.exit(0);
-                break;
-        }
-    }
-
-    public void onSuccessNetClient(int paramInt, String paramString)
-    {
-        if(paramString!=null && paramString.length()>0){
-            try {
-                Log.d(TAG,"paramString="+paramString.substring(paramString.indexOf("{",0),paramString.lastIndexOf("}")+1));
-                paramString=paramString.substring(paramString.indexOf("{",0),paramString.lastIndexOf("}")+1);
-                JSONObject localJSONObject1 = new JSONObject(paramString);
-                String str = localJSONObject1.optString("state");
-                int i=-1;
-                i = localJSONObject1.optInt(ServerErrorCode.ERROR_CODE);
-                switch (i){
-                    default:
-                        showToast("未知错误！");
-                        break;
-                    case ServerErrorCode.ERROR_CODE_SUCCESS:
-                        switch (paramInt){
-                            default:
-                                break;
-                            case EXIT_PPPOE:
-                                Log.d("error:EXIT_PPPOE=","paramString="+paramString);
-                                showToast("退出PPPOE成功!");
-                                finish();
-                                System.exit(0);
-                                break;
-                        }
-                    case ServerErrorCode.ERROR_CODE_EMPTY:
-                        showToast(str);
-                        break;
-                    case ServerErrorCode.ERROR_CODE_SETTING:
-                        showToast(str);
-                        break;
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+//    public void onSuccessNetClient(int paramInt, String paramString)
+//    {
+//        if(paramString!=null && paramString.length()>0){
+//            try {
+//                Log.d(TAG,"paramString="+paramString.substring(paramString.indexOf("{",0),paramString.lastIndexOf("}")+1));
+//                paramString=paramString.substring(paramString.indexOf("{",0),paramString.lastIndexOf("}")+1);
+//                JSONObject localJSONObject1 = new JSONObject(paramString);
+//                String str = localJSONObject1.optString("state");
+//                int i=-1;
+//                i = localJSONObject1.optInt(ServerErrorCode.ERROR_CODE);
+//                switch (i){
+//                    default:
+//                        showToast("未知错误！");
+//                        break;
+////                    case ServerErrorCode.ERROR_CODE_SUCCESS:
+////                        switch (paramInt){
+////                            default:
+////                                break;
+////                            case EXIT_PPPOE:
+////                                Log.d("error:EXIT_PPPOE=","paramString="+paramString);
+////                                showToast("退出PPPOE成功!");
+////                                finish();
+////                                System.exit(0);
+////                                break;
+////                        }
+//                    case ServerErrorCode.ERROR_CODE_EMPTY:
+//                        showToast(str);
+//                        break;
+//                    case ServerErrorCode.ERROR_CODE_SETTING:
+//                        showToast(str);
+//                        break;
+//                }
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 }

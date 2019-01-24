@@ -151,6 +151,7 @@ public class LoginActivity extends BaseActivity implements ILoginView, LoginCons
                // this.presenter.startLogin(1, getLoginInfo());
                 controlDialog(DIALOG_DISMISS,null);
                 startActivity(MainActivity.class);
+                finish();
                 return;
             case R.id.unit_layout:
                 if (this.window == null)
@@ -320,10 +321,5 @@ public class LoginActivity extends BaseActivity implements ILoginView, LoginCons
 //            localDataManager.setDevice(str);
 //            return true;
 //        }
-    }
-
-    @Override
-    public void onFailedNetClient(int paramInt, String paramString) {
-
     }
 }

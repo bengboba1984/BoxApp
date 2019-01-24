@@ -94,9 +94,4 @@ public class UserInfoActivity extends BaseActivity
         }
 
     }
-
-    @Override
-    public void onFailedNetClient(int paramInt, String paramString) {
-
-    }
 }

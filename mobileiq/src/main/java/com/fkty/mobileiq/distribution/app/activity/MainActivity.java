@@ -4,30 +4,41 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fkty.mobileiq.distribution.R;
 import com.fkty.mobileiq.distribution.basic.BaseActivity;
 import com.fkty.mobileiq.distribution.constant.CommonField;
+import com.fkty.mobileiq.distribution.constant.ServerErrorCode;
 import com.fkty.mobileiq.distribution.core.CoreManager;
+import com.fkty.mobileiq.distribution.http.INetNotify;
+import com.fkty.mobileiq.distribution.http.WebHttpUtils;
 import com.fkty.mobileiq.distribution.manager.DataManager;
 import com.fkty.mobileiq.distribution.manager.MWifiManager;
 import com.fkty.mobileiq.distribution.ui.adapter.MainViewPagerAdapter;
 import com.fkty.mobileiq.distribution.view.CustomView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends BaseActivity implements ViewPager.OnPageChangeListener{
+public class MainActivity extends BaseActivity implements ViewPager.OnPageChangeListener,INetNotify{
+    private boolean mIsExit;
+    private final int EXIT_PPPOE = 1001;
     private static final int[] pics = { R.mipmap.img_head1 };
 //    private final int GET_TEMPLET = 2;
 //    private final int SET_URL = 1;
@@ -384,5 +395,79 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     @Override
     public void onFailedNetClient(int paramInt, String paramString) {
 
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (mIsExit) {
+                if (!MWifiManager.getIntance().isBoxConnectNetwork()){
+                    finish();
+                }else{
+                    WebHttpUtils.getInstance().exitPPPoe(this,EXIT_PPPOE);
+                }
+            } else {
+                Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
+                mIsExit = true;
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mIsExit = false;
+                    }
+                }, 2000);
+            }
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
+    public void onErrorNetClient(int paramInt, String paramString)
+    {
+        switch (paramInt){
+            default:
+                Log.d("error:","paramString="+paramString);
+                finish();
+//                System.exit(0);
+                break;
+            case EXIT_PPPOE:
+                Log.d("error:","paramString="+paramString);
+                showToast("退出PPPOE错误,错误信息：" + paramString);
+                finish();
+//                System.exit(0);
+                break;
+        }
+    }
+
+    public void onSuccessNetClient(int paramInt, String paramString)
+    {
+        if(paramString!=null && paramString.length()>0){
+            try {
+                Log.d(TAG,"paramString="+paramString.substring(paramString.indexOf("{",0),paramString.lastIndexOf("}")+1));
+                paramString=paramString.substring(paramString.indexOf("{",0),paramString.lastIndexOf("}")+1);
+                JSONObject localJSONObject1 = new JSONObject(paramString);
+                String str = localJSONObject1.optString("state");
+                int i=-1;
+                i = localJSONObject1.optInt(ServerErrorCode.ERROR_CODE);
+                switch (i){
+                    default:
+                        showToast("未知错误！");
+                        break;
+                    case ServerErrorCode.ERROR_CODE_SUCCESS:
+                        switch (paramInt){
+                            default:
+                                break;
+                            case EXIT_PPPOE:
+                                Log.d("error:EXIT_PPPOE=","paramString="+paramString);
+                                showToast("退出PPPOE成功!");
+                                finish();
+//                                System.exit(0);
+                                break;
+                        }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

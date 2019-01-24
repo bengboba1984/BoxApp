@@ -477,9 +477,4 @@ public class QuestionActivity extends BaseActivity
 
 
     }
-
-    @Override
-    public void onFailedNetClient(int paramInt, String paramString) {
-
-    }
 }

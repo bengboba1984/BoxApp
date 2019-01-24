@@ -97,9 +97,4 @@ public class SettingOTTActivity extends BaseActivity {
         super.onRestart();
         doBusiness(this);
     }
-
-    @Override
-    public void onFailedNetClient(int paramInt, String paramString) {
-
-    }
 }

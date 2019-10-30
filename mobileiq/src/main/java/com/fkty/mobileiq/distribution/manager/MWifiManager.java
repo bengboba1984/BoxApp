@@ -37,13 +37,12 @@ public class MWifiManager {
     private static MWifiManager connect2Wifi = new MWifiManager();
     private WifiManager mWifiManager = SystemManager.getInstance().getWifiManager();
 
-    public static MWifiManager getIntance()
-    {
+    public static MWifiManager getIntance() {
 
         return connect2Wifi;
     }
 
-    public boolean isNetworkConnected(){
+    public boolean isNetworkConnected() {
 //        Log.d(TAG,"testing~~~~~~~~~~~~~~~~~~~`");
 //
 //        int ret=-999;
@@ -66,25 +65,25 @@ public class MWifiManager {
 //            return false;
 //        }
 
-        if(CommonField.BRIDGE.equals(DataManager.getInstance().getOotConnectType())){
+        if (CommonField.BRIDGE.equals(DataManager.getInstance().getOotConnectType())) {
             //桥接模式无法联网
             return false;
         }
-        Context context=DistributedMobileIQApplication.getInstance();
-        if(context!=null){
-            ConnectivityManager cm= (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            if(cm == null){
+        Context context = DistributedMobileIQApplication.getInstance();
+        if (context != null) {
+            ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            if (cm == null) {
                 return false;
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 NetworkCapabilities nc = cm.getNetworkCapabilities(cm.getActiveNetwork());
-                Log.d(TAG, "nc="+nc.toString());
+                Log.d(TAG, "nc=" + nc.toString());
                 return nc.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) && nc.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
-            }else{
-                NetworkInfo info= cm.getActiveNetworkInfo();
-                if(info!=null && (info.getState()==NetworkInfo.State.CONNECTING || info.getState()==NetworkInfo.State.CONNECTED)){
+            } else {
+                NetworkInfo info = cm.getActiveNetworkInfo();
+                if (info != null && (info.getState() == NetworkInfo.State.CONNECTING || info.getState() == NetworkInfo.State.CONNECTED)) {
                     return true;
-                }else{
+                } else {
                     return false;
                 }
             }
@@ -92,27 +91,28 @@ public class MWifiManager {
         return false;
     }
 
-    public boolean isBoxConnectNetwork()
-    {
-        if(this.mWifiManager.getConnectionInfo().getSSID().contains(WIFI_NAME)){
+    public boolean isBoxConnectNetwork() {
+        if (this.mWifiManager.getConnectionInfo().getSSID().contains(WIFI_NAME)) {
             return isNetworkConnected();
-        }else{
+        } else {
             return false;
         }
     }
 
-    public boolean isWifiConnect()
-    {
+    public boolean isWifiConnect() {
+        Context context = DistributedMobileIQApplication.getInstance();
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        Log.d(MWifiManager.class.getName(), "cm.getActiveNetworkInfo().getExtraInfo()=" + getSSID() + "/Build.VERSION.SDK_INT=" + Build.VERSION.SDK_INT);
         return this.mWifiManager.getConnectionInfo().getSSID().contains(WIFI_NAME);
     }
 
-    public void startScanWifi(){
+    public void startScanWifi() {
 
         SystemManager.getInstance().startScanWifi();
     }
 
-    public boolean ConnectWifi()
-    {
+    public boolean ConnectWifi() {
 
         if (this.mWifiManager.getConnectionInfo().getSSID().contains(WIFI_NAME))
             return true;
@@ -120,19 +120,17 @@ public class MWifiManager {
         List localList = SystemManager.getInstance().getWifiList();
         Log.e("Connect2Wifi", "==================" + localList.size());
         ScanResult localScanResult = null;
-        for (int i = 0; i < localList.size(); i++)
-        {
-            Log.e("Connect2Wifi", "WIFI name : " + ((ScanResult)localList.get(i)).SSID);
-            if (!((ScanResult)localList.get(i)).SSID.contains(WIFI_NAME)){
+        for (int i = 0; i < localList.size(); i++) {
+            Log.e("Connect2Wifi", "WIFI name : " + ((ScanResult) localList.get(i)).SSID);
+            if (!((ScanResult) localList.get(i)).SSID.contains(WIFI_NAME)) {
                 continue;
-            }else{
-                localScanResult = (ScanResult)localList.get(i);
+            } else {
+                localScanResult = (ScanResult) localList.get(i);
                 break;
             }
         }
         boolean bool = false;
-        if (localScanResult != null)
-        {
+        if (localScanResult != null) {
 //            int j = this.mWifiManager.addNetwork(createWifiConfig(localScanResult.SSID, WIFI_PWD, WIFICIPHER_WPA2));
             int j = this.mWifiManager.addNetwork(createWifiConfig(localScanResult.SSID, WIFI_PWD, WIFICIPHER_NOPASS));
             Log.e("Connect2Wifi", "-------------------netId : " + j);
@@ -142,8 +140,7 @@ public class MWifiManager {
         return bool;
     }
 
-    private WifiConfiguration createWifiConfig(String paramString1, String paramString2, int paramInt)
-    {
+    private WifiConfiguration createWifiConfig(String paramString1, String paramString2, int paramInt) {
         WifiConfiguration localWifiConfiguration1 = new WifiConfiguration();
         localWifiConfiguration1.allowedAuthAlgorithms.clear();
         localWifiConfiguration1.allowedGroupCiphers.clear();
@@ -194,15 +191,13 @@ public class MWifiManager {
                 return localWifiConfiguration1;
         }
     }
-    private WifiConfiguration isExist(String paramString)
-    {
+
+    private WifiConfiguration isExist(String paramString) {
         List localList = this.mWifiManager.getConfiguredNetworks();
-        if ((localList != null) && (localList.size() > 0))
-        {
+        if ((localList != null) && (localList.size() > 0)) {
             Iterator localIterator = localList.iterator();
-            while (localIterator.hasNext())
-            {
-                WifiConfiguration localWifiConfiguration = (WifiConfiguration)localIterator.next();
+            while (localIterator.hasNext()) {
+                WifiConfiguration localWifiConfiguration = (WifiConfiguration) localIterator.next();
                 if (localWifiConfiguration.SSID.equals("\"" + paramString + "\""))
                     return localWifiConfiguration;
             }
@@ -210,8 +205,35 @@ public class MWifiManager {
         return null;
     }
 
-    public String getSSID()
-    {
-        return this.mWifiManager.getConnectionInfo().getSSID();
+//    public String getSSID() {
+//        return this.mWifiManager.getConnectionInfo().getSSID();
+//    }
+
+
+    public String getSSID() {
+        String ssid = "unknown id";
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O || Build.VERSION.SDK_INT ==  Build.VERSION_CODES.P) {
+            WifiManager mWifiManager = (WifiManager) DistributedMobileIQApplication.getInstance().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            assert mWifiManager != null;
+            WifiInfo info = mWifiManager.getConnectionInfo();
+            Log.d("@@@=====","info.toString()="+info.toString());
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+                return info.getSSID();
+            } else {
+                return info.getSSID().replace("\"", "");
+            }
+        } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.O_MR1) {
+            ConnectivityManager connManager = (ConnectivityManager) DistributedMobileIQApplication.getInstance().getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            assert connManager != null;
+            NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
+            Log.d("@@@=====","networkInfo.toString()="+networkInfo.toString());
+            if (networkInfo.isConnected()) {
+                Log.d("@@@=====","networkInfo.getExtraInfo()="+networkInfo.getExtraInfo());
+                if (networkInfo.getExtraInfo() != null) {
+                    return networkInfo.getExtraInfo().replace("\"", "");
+                }
+            }
+        }
+        return ssid;
     }
 }

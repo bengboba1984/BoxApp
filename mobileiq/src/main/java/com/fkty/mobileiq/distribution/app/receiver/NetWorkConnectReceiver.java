@@ -23,7 +23,7 @@ public class NetWorkConnectReceiver extends BroadcastReceiver
     {
 
         final String action = paramIntent.getAction();
-//        Log.d("NetWorkConnectReceiver","////////////"+action+"/////////////");
+        Log.d(TAG,"////////////"+action+"/////////////");
         if (action.equals(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)) {
             SystemManager.getInstance().setScanResults();
             List localList = SystemManager.getInstance().getWifiList();
@@ -45,6 +45,6 @@ public class NetWorkConnectReceiver extends BroadcastReceiver
                     break;
             }
         }
-//        Log.e("NetWorkConnectReceiver", "" + MWifiManager.getIntance().isConnect());
+        Log.e(TAG, "action=" + action);
     }
 }

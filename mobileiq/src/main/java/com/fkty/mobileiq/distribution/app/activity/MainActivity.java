@@ -238,6 +238,11 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
                     startActivity(CustomActivity.class);
                     break;
                 }
+                if ((DataManager.getInstance().getWoNumber() == null) || (DataManager.getInstance().getWoNumber().length() < 1)){
+                    showToast(getString(R.string.wo_number_null));
+                    startActivity(CustomActivity.class);
+                    break;
+                }
                 if(DataManager.getInstance().getOpenData()==null || DataManager.getInstance().getOpenData().size()<1){
                     showToast(getString(R.string.url_null));
                     startActivity(SettingActivity.class);

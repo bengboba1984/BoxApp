@@ -114,8 +114,8 @@ public class SystemManager {
     {
         Log.d("SystemManager", String.valueOf(this.wifiManager.isWifiEnabled())+"/"+this.wifiManager.getWifiState());
         this.wifiManager.startScan();
-      //  this.wifiList = this.wifiManager.getScanResults();
-      //  this.wifiConfigurations = this.wifiManager.getConfiguredNetworks();
+//        this.wifiList = this.wifiManager.getScanResults();
+//        this.wifiConfigurations = this.wifiManager.getConfiguredNetworks();
     }
 
     public List<ScanResult> getWifiList()

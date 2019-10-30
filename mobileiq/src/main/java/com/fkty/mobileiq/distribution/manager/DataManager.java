@@ -20,6 +20,7 @@ public class DataManager {
     private String url;
     private String account;
     private String stbID;
+    private String woNumber;
     private String cpu;
     private String hardDisk;
     private String deviceSeq;
@@ -51,6 +52,15 @@ public class DataManager {
     private List<TestShowFieldBean> speedUploadField = new ArrayList();
 
     private JSONObject uploadResult=new JSONObject();
+    private String resultSeq;
+
+    public String getResultSeq() {
+        return resultSeq;
+    }
+
+    public void setResultSeq(String resultSeq) {
+        this.resultSeq = resultSeq;
+    }
 
     public JSONObject getUploadResult() {
         return uploadResult;
@@ -179,6 +189,14 @@ public class DataManager {
             e.printStackTrace();
         }
         return localJSONObject1;
+    }
+
+    public String getWoNumber() {
+        return woNumber;
+    }
+
+    public void setWoNumber(String woNumber) {
+        this.woNumber = woNumber;
     }
 
     public String getStbID() {

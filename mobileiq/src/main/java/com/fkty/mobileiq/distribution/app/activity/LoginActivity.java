@@ -257,7 +257,7 @@ public class LoginActivity extends BaseActivity implements ILoginView, LoginCons
 //        DataManager.getInstance().setLoginInfo(this.loginInfo);
         if (PermissionManager.getInstance().needRequestPermission())
         {
-            checkPermission();
+//            checkPermission();
         }
 
 //        if ((DataManager.getInstance().getUrl() != null) && (DataManager.getInstance().getUrl().length() > 0))
@@ -301,25 +301,25 @@ public class LoginActivity extends BaseActivity implements ILoginView, LoginCons
         return true;
     }
 
-    private boolean checkPermission()
-    {
-        Log.d("hello", "checkPermission");
-        new ArrayList();
-        String[] arrayOfString1 = { "android.permission.READ_PHONE_STATE" };
-        String[] arrayOfString2 = PermissionManager.getInstance().checkPermisson(this, arrayOfString1);
-        if (arrayOfString2[0] != null)
-        {
-            Log.d("hello", "regist Permission");
-            ActivityCompat.requestPermissions(this, arrayOfString2, 100);
-            return false;
-        }
-        return true;
-//        DataManager localDataManager = DataManager.getInstance();
-//        if (SystemManager.getInstance().getTelephonyManager() != null);
-//        for (String str = SystemManager.getInstance().getTelephonyManager().getDeviceId(); ; str = "")
+//    private boolean checkPermission()
+//    {
+//        Log.d("hello", "checkPermission");
+//        new ArrayList();
+//        String[] arrayOfString1 = { "android.permission.READ_PHONE_STATE" };
+//        String[] arrayOfString2 = PermissionManager.getInstance().checkPermisson(this, arrayOfString1);
+//        if (arrayOfString2[0] != null)
 //        {
-//            localDataManager.setDevice(str);
-//            return true;
+//            Log.d("hello", "regist Permission");
+//            ActivityCompat.requestPermissions(this, arrayOfString2, 100);
+//            return false;
 //        }
-    }
+//        return true;
+////        DataManager localDataManager = DataManager.getInstance();
+////        if (SystemManager.getInstance().getTelephonyManager() != null);
+////        for (String str = SystemManager.getInstance().getTelephonyManager().getDeviceId(); ; str = "")
+////        {
+////            localDataManager.setDevice(str);
+////            return true;
+////        }
+//    }
 }

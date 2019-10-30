@@ -10,8 +10,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -47,11 +49,11 @@ public class TestFieldJson {
         return testResultBeanList;
     }
 
-    public static void parseUploadResultField(JSONObject resultJSON,int testType) {
+    public static void parseUploadResultField(JSONObject resultJSON,int testType,int testTemplateType) {
         JSONObject rs = DataManager.getInstance().getUploadResult();
         try {
             JSONArray items;
-            if (rs.length() == 0) {
+            if (rs==null || rs.length() == 0) {
                 items = new JSONArray();
             }else{
                 items=rs.getJSONArray("items");
@@ -59,8 +61,12 @@ public class TestFieldJson {
             JSONObject item =new JSONObject();
             item.put("testType",testType);
             item.put("applicationType",1);
+            item.put("testTemplateType",testTemplateType);
+            item.put("resultSeq",getResultSeq());
             item.put("errorCode", ServerErrorCode.ERROR_CODE_SUCCESS);
             item.put("account", DataManager.getInstance().getAccount());
+            item.put("stbId", DataManager.getInstance().getStbID());
+            item.put("tester", DataManager.getInstance().getLoginInfo().getJobnumber());
 
 
             switch (testType){
@@ -90,34 +96,11 @@ public class TestFieldJson {
         }
 
     }
-//    public static List<TestResultBean> parseFieldColumn4SameCol(List<TestShowFieldBean> fieldList, JSONObject resultJSON) {
-//        ArrayList testResultBeanList = new ArrayList();
-//
-//        if (fieldList != null && fieldList.size() > 0) {
-//            Iterator it = fieldList.iterator();
-//            while (it.hasNext()) {
-//                TestShowFieldBean tsfb = (TestShowFieldBean) it.next();
-//                Iterator<String> rsKeys=resultJSON.keys();
-//                while(rsKeys.hasNext()){
-//                    String rsKey=rsKeys.next();
-//                    if(rsKey.startsWith(tsfb.getColumn())){
-//                        TestResultBean trb = new TestResultBean();
-//                        trb.setTestName(tsfb.getName());
-//                        if ("int".equals(tsfb.getType())) {
-//                            int value = resultJSON.optInt(rsKey);
-//                            trb.setContent(value + tsfb.getUnit());
-//                        } else if ("string".equals(tsfb.getType())) {
-//                            String value = resultJSON.optString(rsKey);
-//                            trb.setContent(value + tsfb.getUnit());
-//                        }else {
-//                            trb.setContent("");
-//                        }
-//                        testResultBeanList.add(trb);
-//                    }
-//                }
-//            }
-//        }
-//        return testResultBeanList;
-//    }
-
+    private static String getResultSeq()  {
+        Date curr = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        String currentDate = formatter.format(curr);
+        String seq = currentDate + DataManager.getInstance().getAccount();
+        return seq;
+    }
 }

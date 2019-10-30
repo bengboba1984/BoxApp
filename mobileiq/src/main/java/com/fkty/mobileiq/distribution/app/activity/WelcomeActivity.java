@@ -20,22 +20,18 @@ import android.widget.Toast;
 
 import com.fkty.mobileiq.distribution.R;
 import com.fkty.mobileiq.distribution.basic.BaseActivity;
-import com.fkty.mobileiq.distribution.common.SystemManager;
-import com.fkty.mobileiq.distribution.constant.CommonField;
 import com.fkty.mobileiq.distribution.constant.ServerErrorCode;
 import com.fkty.mobileiq.distribution.constant.WebServerConstant;
-import com.fkty.mobileiq.distribution.http.HttpUtil;
 import com.fkty.mobileiq.distribution.http.INetNotify;
 import com.fkty.mobileiq.distribution.http.WebHttpUtils;
 import com.fkty.mobileiq.distribution.json.MainJsonUtil;
-import com.fkty.mobileiq.distribution.manager.DataManager;
 import com.fkty.mobileiq.distribution.manager.MWifiManager;
 import com.fkty.mobileiq.distribution.manager.PermissionManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
+import java.util.ArrayList;
 
 public class WelcomeActivity extends BaseActivity implements INetNotify {
 
@@ -95,14 +91,11 @@ public class WelcomeActivity extends BaseActivity implements INetNotify {
     private void checkPermission(boolean needUpdate)
     {
         Log.d("hello", "checkPermission");
-        String[] rw = {Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE};
-        String[] checkPermisson = PermissionManager.getInstance().checkPermisson(this, rw);
-        if (checkPermisson[0]!=null || checkPermisson[1]!=null )
-        {
-            Log.d("hello", "regist Permission");
-            ActivityCompat.requestPermissions(this, rw, MY_REQUEST_CODE);
+        String[] rw = {Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE};
+        ArrayList<String> checkPermisson = PermissionManager.getInstance().checkPermisson(this, rw);
+        if(!checkPermisson.isEmpty()){
+            ActivityCompat.requestPermissions(this, checkPermisson.toArray(new String[checkPermisson.size()]), MY_REQUEST_CODE);
         }else {
-
             if(UPGRAD_BOX_FLAG && needUpdate){
                 upgradeBoxVersion();
             }else {
@@ -118,17 +111,10 @@ public class WelcomeActivity extends BaseActivity implements INetNotify {
         Log.d("hello", "onRequestPermissionsResult");
         switch (paramInt) {
             case MY_REQUEST_CODE:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, "permission allow", Toast.LENGTH_LONG).show();
-                    //        HttpUtil.getInstance().getForeginServer(GET_FOREGIN_SERVER, this);
-                    if(UPGRAD_BOX_FLAG){
-                        upgradeBoxVersion();
-                    }else {
-                        startActivity(LoginActivity.class);
-                        finish();
-                    }
-                } else {
-                    Toast.makeText(this, "permission deny", Toast.LENGTH_LONG).show();
+                if(UPGRAD_BOX_FLAG){
+                    upgradeBoxVersion();
+                }else {
+                    startActivity(LoginActivity.class);
                     finish();
                 }
             default:

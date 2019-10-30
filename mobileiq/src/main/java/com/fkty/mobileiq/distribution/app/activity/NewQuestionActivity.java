@@ -235,7 +235,7 @@ public class NewQuestionActivity extends BaseActivity
                                         Log.d(TAG,"onStartSuccess:"+localJSONObject6.optJSONArray("testResult").get(0).toString());
                                         localTestTypeBean2.setResult(localJSONObject6.optJSONArray("testResult").get(0).toString());
                                         //测试数据塞入DataManager
-                                        TestFieldJson.parseUploadResultField(new JSONObject(localTestTypeBean2.getResult()),localTestTypeBean2.getTestType());
+                                        TestFieldJson.parseUploadResultField(new JSONObject(localTestTypeBean2.getResult()),localTestTypeBean2.getTestType(),CommonField.MODLE_TYPE_MALFUNCTION_ELIMINATION);
                                     }else{
                                         localTestTypeBean2.setResult("");
                                     }

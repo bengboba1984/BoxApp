@@ -26,5 +26,17 @@
             android:gravity="right" />
     </LinearLayout>
     <View style="@style/underline" />
+    <LinearLayout android:id="@id/custom_layout3" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_margin="@dimen/magin_big">
+        <TextView android:id="@id/wo_number_key" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="@dimen/magin_middle" android:text="工单号" />
+        <EditText
+            android:id="@id/wo_number"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/magin_big"
+            android:layout_marginRight="@dimen/magin_big"
+            android:background="@null"
+            android:gravity="right" />
+    </LinearLayout>
+    <View style="@style/underline" />
     <Button android:textColor="@color/white" android:id="@id/custom_sure" android:layout_margin="@dimen/magin_big" android:text="@string/sure" style="@style/button" />
 </LinearLayout>

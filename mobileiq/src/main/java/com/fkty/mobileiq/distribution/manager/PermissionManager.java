@@ -23,17 +23,18 @@ public class PermissionManager {
         return instance;
     }
 
-    public String[] checkPermisson(Context paramContext, String[] paramArrayOfString)
+    public ArrayList<String> checkPermisson(Context paramContext, String[] paramArrayOfString)
     {
+        ArrayList<String> permissions = new ArrayList<>();
         if(paramArrayOfString!=null && paramArrayOfString.length>0){
             for(int i=0;i<paramArrayOfString.length;i++){
-                if (ContextCompat.checkSelfPermission(paramContext, paramArrayOfString[i]) ==  PackageManager.PERMISSION_GRANTED)
+                if (ContextCompat.checkSelfPermission(paramContext, paramArrayOfString[i]) !=  PackageManager.PERMISSION_GRANTED)
                 {
-                    paramArrayOfString[i]=null;
+                    permissions.add(paramArrayOfString[i]);
                 }
             }
         }
-        return paramArrayOfString;
+        return permissions;
     }
 
     public boolean needRequestPermission()

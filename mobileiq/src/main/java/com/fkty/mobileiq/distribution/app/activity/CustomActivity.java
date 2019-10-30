@@ -23,6 +23,7 @@ public class CustomActivity extends BaseActivity implements INetNotify {
     private final int SET_ACCOUNT_ID = 1;
     private EditText account;
     private EditText stbID;
+    private EditText woNumber;
     private ImageView backImg;
     private Button btn;
     private ProgressDialog progressBar;
@@ -52,6 +53,8 @@ public class CustomActivity extends BaseActivity implements INetNotify {
         this.account.setOnClickListener(this);
         this.stbID = paramView.findViewById(R.id.stb_id);
         this.stbID.setOnClickListener(this);
+        this.woNumber = paramView.findViewById(R.id.wo_number);
+        this.woNumber.setOnClickListener(this);
     }
 
     @Override
@@ -62,6 +65,12 @@ public class CustomActivity extends BaseActivity implements INetNotify {
         }else{
             this.account.setText(DataManager.getInstance().getAccount());
             this.account.setEnabled(true);
+        }
+        if(DataManager.getInstance().getWoNumber()!=null && DataManager.getInstance().getWoNumber().length()>0){
+            this.woNumber.setText(DataManager.getInstance().getWoNumber());
+        }
+        if(DataManager.getInstance().getStbID()!=null && DataManager.getInstance().getStbID().length()>0){
+            this.stbID.setText(DataManager.getInstance().getStbID());
         }
         if (this.progressBar == null){
             this.progressBar = new ProgressDialog(this);
@@ -115,6 +124,7 @@ public class CustomActivity extends BaseActivity implements INetNotify {
             case R.id.custom_sure:
                 String strAccount = this.account.getText().toString().trim();
                 String strSTB = this.stbID.getText().toString().trim();
+                String strWONumber = this.woNumber.getText().toString().trim();
 
                 if (((strAccount == null) || (strAccount.length() < 1)) && ((strSTB == null) || (strSTB.length() < 1)))
                 {
@@ -124,6 +134,10 @@ public class CustomActivity extends BaseActivity implements INetNotify {
                 if ((strSTB != null) && (strSTB.length() >= 1))
                 {
                     DataManager.getInstance().setStbID(strSTB);
+                }
+                if ((strWONumber != null) && (strWONumber.length() >= 1))
+                {
+                    DataManager.getInstance().setWoNumber(strWONumber);
                 }
                 this.progressBar.setMessage("设置宽带账号/STB");
                 if (!this.progressBar.isShowing())

@@ -114,6 +114,8 @@ public class WebHttpUtils implements Runnable{
             uploadResult2PlateformTask();
         }else if("set_ssid".equals(str)){
             setSSIDTask();
+        }else if("submitWOByResultSeq".equals(str)){
+            submitWOByResultSeqTask();
         }
 
     }
@@ -284,7 +286,7 @@ public class WebHttpUtils implements Runnable{
         {
             public void onError(Call paramCall, Exception e, int paramInt)
             {
-                Log.e("startTestTask","startTestTask:onError"+e.getMessage());
+                Log.e("WebHttpUtils","startTestTask:onError"+e.getMessage());
                 e.printStackTrace();
                 if (WebHttpUtils.this.notify != null)
                     WebHttpUtils.this.notify.onErrorNetClient(paramInt, e.getMessage());
@@ -292,7 +294,7 @@ public class WebHttpUtils implements Runnable{
 
             public void onResponse(String paramString, int paramInt)
             {
-                Log.d("startTestTask","startTestTask:onResponse");
+                Log.d("WebHttpUtils","startTestTask:onResponse="+paramString+"/paramInt="+paramInt);
                 if (WebHttpUtils.this.notify != null)
                     WebHttpUtils.this.notify.onSuccessNetClient(paramInt, paramString);
             }
@@ -866,7 +868,53 @@ public class WebHttpUtils implements Runnable{
         }
     }
 
+    public boolean submitWOByResultSeq(INetNotify paramINetNotify, int paramInt) {
+        if (this.thread != null)
+        {
+            if (this.thread.isAlive())
+                return false;
+            this.thread = null;
+        }
+        this.id = paramInt;
+        this.notify = paramINetNotify;
+        this.thread = new Thread(this, "submitWOByResultSeq");
+        this.thread.start();
+        return true;
+    }
+    public void submitWOByResultSeqTask()
+    {
+        String resultSeq= DataManager.getInstance().getResultSeq();
+        String woNumber= DataManager.getInstance().getWoNumber();
+        JSONObject params=new JSONObject();
+        try {
+            params.put("resultSeq",resultSeq);
+            params.put("woNumber",woNumber);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
+
+        Log.d("WebHttpUtil","##### resultSeq="+resultSeq+"|woNumber="+woNumber+" ######");
+        OkHttpUtils.postString().mediaType(MediaType.parse("application/json; charset=utf-8")).url(DataManager.getInstance().getUrl()+WebServerConstant.REPORT_WEB_SUBMIT_WO).content(params.toString()).id(this.id).build().execute(new StringCallback()
+        {
+            public void onError(Call paramCall, Exception e, int paramInt)
+            {
+                Log.e("WebHttpUtil","submitWOByResultSeqTask:onError"+e.getMessage());
+                DataManager.getInstance().setResultSeq(null);
+                e.printStackTrace();
+                if (WebHttpUtils.this.notify != null)
+                    WebHttpUtils.this.notify.onErrorNetClient(paramInt, e.getMessage());
+            }
+
+            public void onResponse(String paramString, int paramInt)
+            {
+                Log.d("WebHttpUtil","submitWOByResultSeqTask:onResponse="+paramString);
+                DataManager.getInstance().setResultSeq(null);
+                if (WebHttpUtils.this.notify != null)
+                    WebHttpUtils.this.notify.onSuccessNetClient(paramInt, paramString);
+            }
+        });
+    }
     public boolean uploadResult2Plateform(INetNotify paramINetNotify, int paramInt) {
         if (this.thread != null)
         {

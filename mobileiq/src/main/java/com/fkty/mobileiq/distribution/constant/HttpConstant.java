@@ -17,6 +17,6 @@ public class HttpConstant {
     static
     {
         HTTP_GET_FOREIGN = HTTP_COMMON + "/getRelatedSystemPropertyList";
-        HTTP_POST_UPLOAD_FILE = "http://114.242.25.188:4401/uploadMobileResourceFile";
+        HTTP_POST_UPLOAD_FILE = "https://114.242.25.188:4401/uploadMobileResourceFile";
     }
 }

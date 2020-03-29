@@ -1,5 +1,7 @@
 package com.fkty.mobileiq.distribution.manager;
 
+import android.widget.Toast;
+
 import com.fkty.mobileiq.distribution.bean.LoginInfo;
 import com.fkty.mobileiq.distribution.bean.TestParamsBean;
 import com.fkty.mobileiq.distribution.bean.TestShowFieldBean;
@@ -9,7 +11,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import static com.fkty.mobileiq.distribution.constant.ServerErrorCode.MSCHAP_ERROR_CODE_10;
+import static com.fkty.mobileiq.distribution.constant.ServerErrorCode.MSCHAP_ERROR_CODE_11;
+import static com.fkty.mobileiq.distribution.constant.ServerErrorCode.MSCHAP_ERROR_CODE_12;
+import static com.fkty.mobileiq.distribution.constant.ServerErrorCode.MSCHAP_ERROR_CODE_4;
 
 /**
  * Created by frank_tracy on 2017/12/18.
@@ -24,8 +32,10 @@ public class DataManager {
     private String cpu;
     private String hardDisk;
     private String deviceSeq;
+    private String appVersion;
     private String memory;
     private String mschapErrcode;
+    private String ottConnectReason;
     private String staticIP;
     private String staticSubNet;
     private String staticGate;
@@ -34,6 +44,7 @@ public class DataManager {
     private String pppoeUser;
     private String ootConnectType = CommonField.DHCP;
     private String device;
+    private HashMap ftpInfo=new HashMap();
     private List<TestParamsBean> openData = new ArrayList();
     private List<TestParamsBean> manualData = new ArrayList();
     private List<TestParamsBean> troubleData = new ArrayList();
@@ -53,6 +64,7 @@ public class DataManager {
 
     private JSONObject uploadResult=new JSONObject();
     private String resultSeq;
+    private boolean showTwice4PPPOE=false;
 
     public String getResultSeq() {
         return resultSeq;
@@ -399,11 +411,59 @@ public class DataManager {
         this.traceSubField = traceSubField;
     }
 
+    public HashMap getFtpInfo() {
+        return ftpInfo;
+    }
+
+    public void setFtpInfo(HashMap ftpInfo) {
+        this.ftpInfo = ftpInfo;
+    }
+
+    public String getAppVersion() {
+        return appVersion;
+    }
+
+    public void setAppVersion(String appVersion) {
+        this.appVersion = appVersion;
+    }
+
     public String getMschapErrcode() {
         return mschapErrcode;
     }
 
     public void setMschapErrcode(String mschapErrcode) {
         this.mschapErrcode = mschapErrcode;
+    }
+
+    public String getOttConnectReason() {
+        return ottConnectReason;
+    }
+
+    public void setOttConnectReason(String ottConnectReason) {
+        this.ottConnectReason = ottConnectReason;
+    }
+
+    public String getPPPOEErrorMessage(String mschapErrcode){
+        String message="";
+        if(MSCHAP_ERROR_CODE_10.equals(DataManager.getInstance().getMschapErrcode())){
+            message="PPPOE密码错误!";
+        }else if(MSCHAP_ERROR_CODE_11.equals(DataManager.getInstance().getMschapErrcode())){
+            message=DataManager.getInstance().getOttConnectReason();
+        }else if(MSCHAP_ERROR_CODE_4.equals(DataManager.getInstance().getMschapErrcode())){
+            message="PPPOE连接成功!";
+        }else if(MSCHAP_ERROR_CODE_12.equals(DataManager.getInstance().getMschapErrcode())){
+            message="PPPOE未设置!";
+        }else{
+            message="未知错误!";
+        }
+        return message;
+    }
+
+    public boolean isShowTwice4PPPOE() {
+        return showTwice4PPPOE;
+    }
+
+    public void setShowTwice4PPPOE(boolean showTwice4PPPOE) {
+        this.showTwice4PPPOE = showTwice4PPPOE;
     }
 }

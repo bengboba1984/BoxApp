@@ -9,8 +9,10 @@ public class WebServerConstant {
     public static final boolean LC_TEST_SERVER=false;
     public static final String REPORT_WEB_TEST_RESULT = "/reportWebTestResult";
     public static final String REPORT_WEB_SUBMIT_WO = "/SubmitWOServlet";
+    public static final String POST_CAPTURE_VIDEO = "/receiveCaptureVideoServlet";
+    public static final String DO_LOGIN = "/doLogin";
     public static String WEB_POST_SET_SSID ;
-    public static String HTTP_GET_BOX_VERSION_URL = "http://120.204.112.182/";//"http://ngrok.judecumt.win:10010/box/";//
+    public static String HTTP_GET_BOX_VERSION_URL = "http://113.214.250.44/";//"http://120.204.112.182/";//
     public static String WEB_COMMON = LC_TEST_SERVER?"http://ngrok.judecumt.win:10023":"http://192.168.188.251";//"http://192.168.43.1:19999";//
 //    public static String WEB_COMMON ="http://ngrok.judecumt.win:10023";
     public static String WEB_GET_DOWNLOAD;

@@ -17,8 +17,13 @@ import com.fkty.mobileiq.distribution.DistributedMobileIQApplication;
 import com.fkty.mobileiq.distribution.common.SystemManager;
 import com.fkty.mobileiq.distribution.constant.CommonField;
 
+import org.apache.http.params.CoreConnectionPNames;
+
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -41,6 +46,8 @@ public class MWifiManager {
 
         return connect2Wifi;
     }
+
+
 
     public boolean isNetworkConnected() {
 //        Log.d(TAG,"testing~~~~~~~~~~~~~~~~~~~`");
@@ -78,6 +85,11 @@ public class MWifiManager {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 NetworkCapabilities nc = cm.getNetworkCapabilities(cm.getActiveNetwork());
                 Log.d(TAG, "nc=" + nc.toString());
+                Log.d(TAG,"cm.getActiveNetworkInfo().getExtraInfo()="+cm.getActiveNetworkInfo().getExtraInfo());
+                Log.d(TAG,"cm.getActiveNetworkInfo().getDetailedState()="+ cm.getActiveNetworkInfo().getDetailedState());
+                Log.d(TAG,"nc.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)="+ nc.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED));
+                Log.d(TAG,"nc.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)="+ nc.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET));
+
                 return nc.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) && nc.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
             } else {
                 NetworkInfo info = cm.getActiveNetworkInfo();

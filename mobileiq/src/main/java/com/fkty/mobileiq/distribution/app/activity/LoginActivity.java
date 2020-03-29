@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -22,20 +21,29 @@ import com.fkty.mobileiq.distribution.R;
 import com.fkty.mobileiq.distribution.app.view.ILoginView;
 import com.fkty.mobileiq.distribution.basic.BaseActivity;
 import com.fkty.mobileiq.distribution.bean.LoginInfo;
-import com.fkty.mobileiq.distribution.common.SystemManager;
+import com.fkty.mobileiq.distribution.constant.CommonField;
 import com.fkty.mobileiq.distribution.constant.LoginConstant;
+import com.fkty.mobileiq.distribution.constant.ServerErrorCode;
+import com.fkty.mobileiq.distribution.http.INetNotify;
+import com.fkty.mobileiq.distribution.http.WebHttpUtils;
+import com.fkty.mobileiq.distribution.json.MainJsonUtil;
 import com.fkty.mobileiq.distribution.manager.DataManager;
 import com.fkty.mobileiq.distribution.manager.PermissionManager;
 import com.fkty.mobileiq.distribution.ui.adapter.UnitListAdapter;
-import com.fkty.mobileiq.distribution.utils.Preferences;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-import static com.fkty.mobileiq.distribution.constant.NetWorkConstant.CAPTURE_HTTP_CODE;
+import static com.fkty.mobileiq.distribution.constant.CommonField.UNIT_SERVER;
 
-public class LoginActivity extends BaseActivity implements ILoginView, LoginConstant, AdapterView.OnItemClickListener {
-    private final int GET_FOREGIN_SERVER = 1;
+public class LoginActivity extends BaseActivity implements ILoginView, LoginConstant, AdapterView.OnItemClickListener, INetNotify {
+    private final int DO_LOGIN = 1;
+    private final int GET_TEMPLET = 2;
+
     private ImageView backImg;
     private List<String> data;
     private ImageView icon;
@@ -44,7 +52,6 @@ public class LoginActivity extends BaseActivity implements ILoginView, LoginCons
     private LoginInfo loginInfo;
     private ProgressDialog loginProgress;
     private EditText password;
-//    private ILoginPresenter presenter;
     private TextView title;
     private TextView unit;
     private ImageView unitImg;
@@ -70,22 +77,21 @@ public class LoginActivity extends BaseActivity implements ILoginView, LoginCons
 
     @Override
     public void initData() {
-//        this.presenter = new LoginPresenter(this);
         this.loginInfo = new LoginInfo();
         if (this.loginProgress == null)
         {
             this.loginProgress = new ProgressDialog(this);
             this.loginProgress.requestWindowFeature(Window.FEATURE_NO_TITLE);
             this.loginProgress.setIndeterminate(true);
-//            this.loginProgress.setOnCancelListener(new DialogInterface.OnCancelListener()
-//            {
-//                public void onCancel(DialogInterface paramDialogInterface)
-//                {
-//                    LoginActivity.this.presenter.cancelLogin();
-//                }
-//            });
             this.loginProgress.setCancelable(false);
         }
+        DataManager.getInstance().setUrl(CommonField.UNIT_SERVER[0][5]);
+        HashMap fi=new HashMap();
+        fi.put("FTP_HOST_NAME",CommonField.UNIT_SERVER[0][1]);
+        fi.put("FTP_PORT",CommonField.UNIT_SERVER[0][2]);
+        fi.put("FTP_USER_NAME",CommonField.UNIT_SERVER[0][3]);
+        fi.put("FTP_PASSWORD",CommonField.UNIT_SERVER[0][4]);
+        DataManager.getInstance().setFtpInfo(fi);
     }
 
     @Override
@@ -120,6 +126,9 @@ public class LoginActivity extends BaseActivity implements ILoginView, LoginCons
             if (loginInfo.contains(LoginConstant.JOBNUMBER)) {
                 this.jobnumber.setText(loginInfo.getString(LoginConstant.JOBNUMBER, null));
             }
+            if (loginInfo.contains(LoginConstant.UNIT)) {
+                this.unit.setText(loginInfo.getString(LoginConstant.UNIT, null));
+            }
         }
     }
 
@@ -141,17 +150,20 @@ public class LoginActivity extends BaseActivity implements ILoginView, LoginCons
                 this.loginInfo=getLoginInfo();
                 DataManager.getInstance().setLoginInfo(this.loginInfo);
 
+
                 SharedPreferences loginInfo=getSharedPreferences(LOGIN_INFO, Context.MODE_PRIVATE);
                 SharedPreferences.Editor loginInfoEditor=loginInfo.edit();
                 loginInfoEditor.putString(LoginConstant.USERNAME,this.loginInfo.getUserName());
                 loginInfoEditor.putString(LoginConstant.PASSWORD,this.loginInfo.getPassword());
                 loginInfoEditor.putString(LoginConstant.JOBNUMBER,this.loginInfo.getJobnumber());
+                loginInfoEditor.putString(LoginConstant.UNIT,this.loginInfo.getUnit());
                 loginInfoEditor.commit();
 
                // this.presenter.startLogin(1, getLoginInfo());
-                controlDialog(DIALOG_DISMISS,null);
-                startActivity(MainActivity.class);
-                finish();
+                WebHttpUtils.getInstance().doLogin(this,this.loginInfo,DO_LOGIN);
+
+
+
                 return;
             case R.id.unit_layout:
                 if (this.window == null)
@@ -178,6 +190,13 @@ public class LoginActivity extends BaseActivity implements ILoginView, LoginCons
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         this.unit.setText(this.data.get(i).trim());
+        DataManager.getInstance().setUrl(CommonField.UNIT_SERVER[i][5]);
+        HashMap fi=DataManager.getInstance().getFtpInfo();
+        fi.clear();
+        fi.put("FTP_HOST_NAME",CommonField.UNIT_SERVER[i][1]);
+        fi.put("FTP_PORT",CommonField.UNIT_SERVER[i][2]);
+        fi.put("FTP_USER_NAME",CommonField.UNIT_SERVER[i][3]);
+        fi.put("FTP_PASSWORD",CommonField.UNIT_SERVER[i][4]);
         if (this.window.isShowing())
             this.window.dismiss();
     }
@@ -210,10 +229,13 @@ public class LoginActivity extends BaseActivity implements ILoginView, LoginCons
     private void showWindow()
     {
         this.data = new ArrayList();
-        this.data.add("测试一部");
-        this.data.add("测试二部");
-        this.data.add("装维一部");
-        this.data.add("装维二部");
+//        this.data.add("测试一部");
+//        this.data.add("测试二部");
+//        this.data.add("装维一部");
+//        this.data.add("装维二部");
+        for(int i=0;i<UNIT_SERVER.length;i++){
+            this.data.add(UNIT_SERVER[i][0]);
+        }
         ListView localListView = new ListView(this);
         localListView.setBackgroundColor(Color.WHITE);
         localListView.setAdapter(new UnitListAdapter(this, this.data));
@@ -231,15 +253,6 @@ public class LoginActivity extends BaseActivity implements ILoginView, LoginCons
         return this.loginInfo;
     }
 
-    @Override
-    public void onGetForeginFailed(int paramInt, Bundle paramBundle) {
-
-    }
-
-    @Override
-    public void onGetForeginSuccess(Bundle paramBundle) {
-
-    }
 
     @Override
     public void onLoginFailed(int paramInt, Bundle paramBundle) {
@@ -299,6 +312,75 @@ public class LoginActivity extends BaseActivity implements ILoginView, LoginCons
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void onErrorNetClient(int paramInt, String paramString) {
+        switch (paramInt){
+            default:
+                break;
+            case DO_LOGIN:
+                Log.d(TAG,"onErrorNetClient:do login="+paramString);
+                JSONObject rs= null;
+                try {
+                    rs = new JSONObject(paramString);
+                    controlDialog(DIALOG_DISMISS,null);
+                    showToast(rs.getString("message"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onFailedNetClient(int paramInt, String paramString) {
+        switch (paramInt){
+            default:
+                break;
+            case DO_LOGIN:
+                Log.d(TAG,"onErrorNetClient:do login="+paramString);
+                JSONObject rs= null;
+                try {
+                    rs = new JSONObject(paramString);
+                    controlDialog(DIALOG_DISMISS,null);
+                    showToast(rs.getString("message"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onSuccessNetClient(int paramInt, String paramString) {
+        switch (paramInt){
+            default:
+                break;
+            case DO_LOGIN:
+                Log.d(TAG,"onSuccessNetClient:do login="+paramString);
+                JSONObject rs= null;
+                try {
+                    rs = new JSONObject(paramString);
+                    if(ServerErrorCode.ERROR_CODE_SUCCESS==rs.optInt("errorCode")){
+                        WebHttpUtils.getInstance().getTemplet4Test(this, GET_TEMPLET);
+                    }else {
+                        controlDialog(DIALOG_DISMISS,null);
+                        showToast(rs.getString("message"));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case GET_TEMPLET:
+                showToast("登录成功并成功获取测试模板！");
+                Log.e(this.TAG, "response:" + paramString);
+                MainJsonUtil.catchModelData(paramString);
+                controlDialog(DIALOG_DISMISS,null);
+                startActivity(MainActivity.class);
+                finish();
+                break;
+        }
     }
 
 //    private boolean checkPermission()

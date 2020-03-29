@@ -1,5 +1,6 @@
 package com.fkty.mobileiq.distribution.manager;
 
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.fkty.mobileiq.distribution.constant.CommonField;
@@ -14,6 +15,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
@@ -163,7 +165,7 @@ public class FTPManager {
         ftpClient.makeDirectory(remotePath);
         // 改变FTP目录
         Log.d("FTPManager","remotePath:"+"/"+remotePath);
-        ftpClient.changeWorkingDirectory("/"+remotePath);
+        ftpClient.changeWorkingDirectory(remotePath);
         // 上传单个文件
 
     }
@@ -184,13 +186,15 @@ public class FTPManager {
     }
 
     public void openConnect() throws IOException {
-        Log.d("FTPManager","openConnect:"+"/"+1);
+        HashMap ftpInfo=DataManager.getInstance().getFtpInfo();
+
+        Log.d("FTPManager","openConnect:"+"/"+ftpInfo.get("FTP_PORT"));
         // 中文转码
         ftpClient.setControlEncoding("UTF-8");
         int reply; // 服务器响应值
         // 连接至服务器
         Log.d("FTPManager","openConnect:"+"/"+2);
-        ftpClient.connect(FTPConstant.HOST_NAME, FTPConstant.PORT);
+        ftpClient.connect(ftpInfo.get("FTP_HOST_NAME")!=null?ftpInfo.get("FTP_HOST_NAME").toString():FTPConstant.HOST_NAME, ftpInfo.get("FTP_PORT")!=null?Integer.parseInt(ftpInfo.get("FTP_PORT").toString()):FTPConstant.PORT);
         Log.d("FTPManager","openConnect:"+"/"+3);
         // 获取响应值
         reply = ftpClient.getReplyCode();
@@ -202,7 +206,7 @@ public class FTPManager {
         }
         Log.d("FTPManager","openConnect:"+"/"+5);
         // 登录到服务器
-        ftpClient.login(FTPConstant.USER_NAME, FTPConstant.PASSWORD);
+        ftpClient.login(ftpInfo.get("FTP_USER_NAME")!=null?ftpInfo.get("FTP_USER_NAME").toString():FTPConstant.USER_NAME, ftpInfo.get("FTP_PASSWORD")!=null?ftpInfo.get("FTP_PASSWORD").toString():FTPConstant.PASSWORD);
         Log.d("FTPManager","openConnect:"+"/"+6);
         // 获取响应值
         reply = ftpClient.getReplyCode();

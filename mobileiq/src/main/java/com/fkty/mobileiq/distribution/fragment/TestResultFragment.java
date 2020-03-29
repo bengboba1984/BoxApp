@@ -85,6 +85,8 @@ public class TestResultFragment extends Fragment implements AdapterView.OnItemCl
 //                    break;
                 case CommonField.TEST_TYPE_SPEED:
                     List speedFieldList = DataManager.getInstance().getSpeedField();
+                    //不使用speedtest.py返回的client ip
+                    resultJSON.put("customerIp",DataManager.getInstance().getStaticIP());
                     this.data.addAll(TestFieldJson.parseFieldColumn(speedFieldList, resultJSON));
                     break;
             }

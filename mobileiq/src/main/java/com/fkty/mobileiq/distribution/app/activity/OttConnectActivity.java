@@ -231,7 +231,7 @@ public class OttConnectActivity extends BaseActivity
                             case GET_SET_PPPOE:
                                 DataManager.getInstance().setPppoeUser(this.ppoeUserString);
                                 DataManager.getInstance().setPppoePwd(this.ppoePwdString);
-                                showToast("设置成功");
+                                showToast("设置成功，正在连接…");
                                 break;
                             case GET_SET_STATIC:
                                 DataManager.getInstance().setStaticIP(this.staticIpString);

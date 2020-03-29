@@ -85,5 +85,6 @@
     <string name="network_disconnect_tip">盒子未联网</string>
     <string name="WO_SUBMIT_SUCCESS">工单已提交</string>
     <string name="WO_SUBMIT_FAIL">提交失败！请重新测试并提交</string>
+    <string name="ott_setting_app_version">App版本号</string>
 
 </resources>

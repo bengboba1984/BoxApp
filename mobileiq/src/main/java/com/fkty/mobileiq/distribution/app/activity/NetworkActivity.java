@@ -54,6 +54,7 @@ import java.util.Locale;
 
 import static com.fkty.mobileiq.distribution.constant.NetWorkConstant.CAPTURE_HTTP_CODE;
 import static com.fkty.mobileiq.distribution.constant.NetWorkConstant.GET_CAPTURE_FILE_ID;
+import static com.fkty.mobileiq.distribution.constant.NetWorkConstant.POST_FILE;
 
 public class NetworkActivity extends BaseActivity
         implements INetWorkView,INetNotify {
@@ -173,7 +174,7 @@ public class NetworkActivity extends BaseActivity
             if(this.resetConnection.isChecked()){
                 SharedPreferences captureHttpCode=getSharedPreferences(CAPTURE_HTTP_CODE, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor=captureHttpCode.edit();
-                editor.putString(this.fileName,DataManager.getInstance().getMschapErrcode());
+                editor.putString(this.fileName,DataManager.getInstance().getPPPOEErrorMessage(DataManager.getInstance().getMschapErrcode()));
                 editor.commit();
                 Log.d(TAG, "captureHttpCode.getString(this.fileName,null)=" + captureHttpCode.getString(this.fileName,null));
             }
@@ -313,8 +314,8 @@ public class NetworkActivity extends BaseActivity
                     this.status=CAPTUREING;
                     Toast.makeText(this, "开始测试，点击结束查看结果", Toast.LENGTH_SHORT).show();
                     SimpleDateFormat sdf=new SimpleDateFormat("yyyyMMddHHmmss");
-
                     int j = (int)(1000.0D * Math.random());
+                    //宽带账号 + yyyyMMddHHmmss + 4位随机数
                     String fn=DataManager.getInstance().getAccount()+"_"+sdf.format(new Date())+j;
                     this.fileName=fn;
                     this.presenter.start(fn);
@@ -398,6 +399,10 @@ public class NetworkActivity extends BaseActivity
                         public void onUploadProgress(int currentStep, long uploadSize, File file) {
                             if(currentStep==FTPConstant.FTP_UPLOAD_SUCCESS){
                                 Log.d(TAG, "-----upload--successful:getAbsolutePath="+file.getAbsolutePath());
+
+
+                                post2WebServer(file.getName());
+
                                 file.delete();
                                 runOnUiThread(new Runnable() {
                                     @Override
@@ -503,11 +508,29 @@ public class NetworkActivity extends BaseActivity
         initFileList();
     }
 
+    private void post2WebServer(String fileName){
+        JSONObject postParam=new JSONObject();
+        try {
+            postParam.put("type",1);
+            postParam.put("account",DataManager.getInstance().getAccount());
+            postParam.put("stbId",DataManager.getInstance().getStbID());
+            postParam.put("tester",DataManager.getInstance().getLoginInfo().getJobnumber());
+            postParam.put("fileName",fileName);
+            WebHttpUtils.getInstance().postCaptureVideo(this,postParam,POST_FILE);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+    }
     @Override
     public void onErrorNetClient(int paramInt, String paramString) {
         switch (paramInt){
             case GET_CAPTURE_FILE_ID:
                 this.presenter.getCaptureFile(this.filePath,CommonField.CAPTURE_FILE_DIR);
+                break;
+            case POST_FILE:
+                Log.d(TAG,"POST_FILE:onErrorNetClient");
                 break;
             default:
                 break;
@@ -516,12 +539,30 @@ public class NetworkActivity extends BaseActivity
 
     @Override
     public void onFailedNetClient(int paramInt, String paramString) {
-
+        switch (paramInt){
+            case GET_CAPTURE_FILE_ID:
+                this.presenter.getCaptureFile(this.filePath,CommonField.CAPTURE_FILE_DIR);
+                break;
+            case POST_FILE:
+                Log.d(TAG,"POST_FILE:Failed");
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
     public void onSuccessNetClient(int paramInt, String paramString) {
-
+        switch (paramInt){
+            case GET_CAPTURE_FILE_ID:
+                this.presenter.getCaptureFile(this.filePath,CommonField.CAPTURE_FILE_DIR);
+                break;
+            case POST_FILE:
+                Log.d(TAG,"POST_FILE:success");
+                break;
+            default:
+                break;
+        }
     }
 
     Handler countHandler=new Handler();

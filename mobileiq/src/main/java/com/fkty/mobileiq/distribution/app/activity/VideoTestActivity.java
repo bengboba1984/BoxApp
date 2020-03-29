@@ -35,6 +35,9 @@ import com.fkty.mobileiq.distribution.manager.UploadProgressListener;
 import com.fkty.mobileiq.distribution.ui.adapter.CaptureFileListAdapter;
 import com.fkty.mobileiq.distribution.utils.FileUtils;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -46,6 +49,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
+import static com.fkty.mobileiq.distribution.constant.NetWorkConstant.POST_FILE;
 
 public class VideoTestActivity extends BaseActivity implements INetWorkView, INetNotify {
     private final int GET_SET_BRIDGE = 4;
@@ -270,7 +275,7 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
             case R.id.start_capture:
                 if(this.status==CAPTURE_READY || this.status==CAPTURE_FINISH){
                     this.status=CAPTUREING;
-                    OTTProperty.getInstance().setAllowedStopCapture(false);
+//                    OTTProperty.getInstance().setAllowedStopCapture(false);
                     this.captureBtn.setText(R.string.stop_capture);
                     this.captureBtn.setTextColor(Color.RED);
                     this.fileLayout.setVisibility(View.VISIBLE);
@@ -289,14 +294,14 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
 
 
                 }else if(this.status==CAPTUREING){
-                    if(OTTProperty.getInstance().isAllowedStopCapture()){
+//                    if(OTTProperty.getInstance().isAllowedStopCapture()){
                         this.progressBar.setMessage("处理数据中....");
                         if (!this.progressBar.isShowing())
                             this.progressBar.show();
                         this.presenter.stop();
-                    }else{
-                        showToast("网桥设置中，请稍后");
-                    }
+//                    }else{
+//                        showToast("网桥设置中，请稍后");
+//                    }
 
 
                 }
@@ -335,6 +340,7 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
                         public void onUploadProgress(int currentStep, long uploadSize, File file) {
                             if(currentStep==FTPConstant.FTP_UPLOAD_SUCCESS){
                                 Log.d(TAG, "-----upload--successful:getAbsolutePath="+file.getAbsolutePath());
+                                post2WebServer(file.getName());
                                 file.delete();
                                 runOnUiThread(new Runnable() {
                                     @Override
@@ -465,12 +471,21 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
                     finish();
                 }
                 break;
+            case POST_FILE:
+                Log.d(TAG,"POST_FILE:onErrorNetClient");
+                break;
         }
     }
 
     @Override
     public void onFailedNetClient(int paramInt, String paramString) {
-
+        switch (paramInt){
+            case POST_FILE:
+                Log.d(TAG,"POST_FILE:Failed");
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
@@ -492,6 +507,9 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
                 if (progressBar.isShowing())
                     progressBar.dismiss();
                 finish();
+                break;
+            case POST_FILE:
+                Log.d(TAG,"POST_FILE:success");
                 break;
         }
 
@@ -555,6 +573,22 @@ public class VideoTestActivity extends BaseActivity implements INetWorkView, INe
         }else{
             finish();
         }
+
+    }
+
+    private void post2WebServer(String fileName){
+        JSONObject postParam=new JSONObject();
+        try {
+            postParam.put("type",2);
+            postParam.put("account",DataManager.getInstance().getAccount());
+            postParam.put("stbId",DataManager.getInstance().getStbID());
+            postParam.put("tester",DataManager.getInstance().getLoginInfo().getJobnumber());
+            postParam.put("fileName",fileName);
+            WebHttpUtils.getInstance().postCaptureVideo(this,postParam,POST_FILE);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
 
     }
 }

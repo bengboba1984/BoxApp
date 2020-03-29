@@ -67,7 +67,10 @@ public class TestFieldJson {
             item.put("account", DataManager.getInstance().getAccount());
             item.put("stbId", DataManager.getInstance().getStbID());
             item.put("tester", DataManager.getInstance().getLoginInfo().getJobnumber());
-
+            item.put("deviceSeq", DataManager.getInstance().getDeviceSeq());
+            item.put("ottConnectType", DataManager.getInstance().getOotConnectType());
+            item.put("androidVersion", DataManager.getInstance().getAppVersion());
+            item.put("boxIP", DataManager.getInstance().getStaticIP());
 
             switch (testType){
                 default:

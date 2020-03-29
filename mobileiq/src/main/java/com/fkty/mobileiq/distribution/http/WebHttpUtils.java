@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.fkty.mobileiq.distribution.app.activity.NewQuestionActivity;
 import com.fkty.mobileiq.distribution.app.activity.SSIDActivity;
+import com.fkty.mobileiq.distribution.bean.LoginInfo;
 import com.fkty.mobileiq.distribution.bean.TestParamsBean;
 import com.fkty.mobileiq.distribution.constant.CommonField;
 import com.fkty.mobileiq.distribution.constant.OpenTestConstant;
@@ -60,6 +61,8 @@ public class WebHttpUtils implements Runnable{
     private String boxUpgradeVersionFP;
     private String ssid;
     private int bridgeFlag;
+    private JSONObject postCaptureParam;
+    private LoginInfo loginInfo;
 
     public static WebHttpUtils getInstance()
     {
@@ -116,6 +119,10 @@ public class WebHttpUtils implements Runnable{
             setSSIDTask();
         }else if("submitWOByResultSeq".equals(str)){
             submitWOByResultSeqTask();
+        }else if("post_capture_video".equals(str)){
+            postCaptureVideoTask();
+        }else if("do_login".equals(str)){
+            doLoginTask();
         }
 
     }
@@ -496,16 +503,19 @@ public class WebHttpUtils implements Runnable{
 
     public void setPPPOETask()
     {
+        Log.d("setPPPOETask","url="+WebServerConstant.WEB_GET_SET_PPPOE + "?userName=" + this.pppoeUser + "&password=" + this.pppoePwd);
         ((GetBuilder)((GetBuilder)OkHttpUtils.get().url(WebServerConstant.WEB_GET_SET_PPPOE + "?userName=" + this.pppoeUser + "&password=" + this.pppoePwd)).id(this.id)).build().execute(new StringCallback()
         {
             public void onError(Call paramCall, Exception paramException, int paramInt)
             {
+                Log.d("setPPPOETask","exception="+paramException.getMessage());
                 if (WebHttpUtils.this.notify != null)
                     WebHttpUtils.this.notify.onErrorNetClient(paramInt, paramException.getMessage());
             }
 
             public void onResponse(String paramString, int paramInt)
             {
+                Log.d("setPPPOETask","exception="+paramString);
                 DataManager.getInstance().setOotConnectType(CommonField.PPPOE);
                 if (WebHttpUtils.this.notify != null)
                     WebHttpUtils.this.notify.onSuccessNetClient(paramInt, paramString);
@@ -1012,5 +1022,95 @@ public class WebHttpUtils implements Runnable{
                 }
             });
         }
+    }
+
+    public boolean postCaptureVideo(INetNotify paramINetNotify, JSONObject postCaptureParam,int paramInt) {
+        if (this.thread != null)
+        {
+            if (this.thread.isAlive())
+                return false;
+            this.thread = null;
+        }
+        this.id = paramInt;
+        this.notify = paramINetNotify;
+        this.postCaptureParam=postCaptureParam;
+        this.thread = new Thread(this, "post_capture_video");
+        this.thread.start();
+        return true;
+    }
+
+    public void postCaptureVideoTask()
+    {
+        OkHttpUtils.postString().mediaType(MediaType.parse("application/json; charset=utf-8")).url(DataManager.getInstance().getUrl()+WebServerConstant.POST_CAPTURE_VIDEO).content(postCaptureParam.toString()).id(this.id).build().execute(new StringCallback()
+        {
+            public void onError(Call paramCall, Exception e, int paramInt)
+            {
+                Log.e("WebHttpUtil","postCaptureVideoTask:onError"+e.getMessage());
+                e.printStackTrace();
+                if (WebHttpUtils.this.notify != null)
+                    WebHttpUtils.this.notify.onErrorNetClient(paramInt, e.getMessage());
+            }
+
+            public void onResponse(String paramString, int paramInt)
+            {
+                Log.d("WebHttpUtil","postCaptureVideoTask:onResponse="+paramString);
+                if (WebHttpUtils.this.notify != null)
+                    WebHttpUtils.this.notify.onSuccessNetClient(paramInt, paramString);
+            }
+        });
+    }
+    public boolean doLogin(INetNotify paramINetNotify, LoginInfo loginInfo, int paramInt) {
+        if (this.thread != null)
+        {
+            if (this.thread.isAlive())
+                return false;
+            this.thread = null;
+        }
+        this.id = paramInt;
+        this.notify = paramINetNotify;
+        this.loginInfo=loginInfo;
+        this.thread = new Thread(this, "do_login");
+        this.thread.start();
+        return true;
+    }
+
+    public void doLoginTask()
+    {
+        String loginUrl=DataManager.getInstance().getUrl();
+
+        if(loginUrl==null || loginUrl.length()<1){
+            for(int i=0;i<CommonField.UNIT_SERVER.length;i++){
+                if(CommonField.UNIT_SERVER[i][0].equals(loginInfo.getUnit())){
+                    loginUrl=CommonField.UNIT_SERVER[i][5];
+                    DataManager.getInstance().setUrl(loginUrl);
+                    break;
+                }
+            }
+        }
+        JSONObject loginParam=new JSONObject();
+        try {
+            loginParam.put("userName",loginInfo.getUserName());
+            loginParam.put("password",loginInfo.getPassword());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+Log.d("WebHttpUtil","loginUrl="+loginUrl+";");
+        OkHttpUtils.postString().mediaType(MediaType.parse("application/json; charset=utf-8")).url(loginUrl + WebServerConstant.DO_LOGIN).content(loginParam.toString()).id(this.id).build().execute(new StringCallback()
+        {
+            public void onError(Call paramCall, Exception e, int paramInt)
+            {
+                Log.e("WebHttpUtil","doLoginTask:onError"+e.getMessage());
+                e.printStackTrace();
+                if (WebHttpUtils.this.notify != null)
+                    WebHttpUtils.this.notify.onErrorNetClient(paramInt, e.getMessage());
+            }
+
+            public void onResponse(String paramString, int paramInt)
+            {
+                Log.d("WebHttpUtil","doLoginTask:onResponse="+paramString);
+                if (WebHttpUtils.this.notify != null)
+                    WebHttpUtils.this.notify.onSuccessNetClient(paramInt, paramString);
+            }
+        });
     }
 }

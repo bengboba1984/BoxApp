@@ -21,6 +21,8 @@ public interface NetWorkConstant {
     int GET_CAPTURE_FILE = 24;
     int GET_CAPTURE_FILE_ID = 25;
     int GET_CAPTURE_FILE_SUCCESS = 26;
+    int POST_FILE=30;
+
     String CAPTURE_HTTP_CODE = "Capture_Htttp_code";
     String[][] httpCode = new String[][]{
             {"-3", "等待超时"},

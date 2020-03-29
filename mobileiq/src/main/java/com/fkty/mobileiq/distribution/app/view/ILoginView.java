@@ -12,10 +12,6 @@ import com.fkty.mobileiq.distribution.inter.IBasicView;
 public interface ILoginView extends IBasicView {
     LoginInfo getLoginInfo();
 
-    void onGetForeginFailed(int paramInt, Bundle paramBundle);
-
-    void onGetForeginSuccess(Bundle paramBundle);
-
     void onLoginFailed(int paramInt, Bundle paramBundle);
 
     void onLoginSuccess(Bundle paramBundle);

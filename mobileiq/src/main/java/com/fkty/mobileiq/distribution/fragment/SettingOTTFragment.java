@@ -131,9 +131,15 @@ public class SettingOTTFragment extends Fragment implements View.OnClickListener
         OttSettingInfoBean cpuBean = new OttSettingInfoBean();
         cpuBean.setName(getString(R.string.ott_setting_device_cpu));
         cpuBean.setContent(DataManager.getInstance().getCpu());
-        OttSettingInfoBean deviceSeqBean = new OttSettingInfoBean();
-        deviceSeqBean.setName(getString(R.string.ott_setting_device_seq));
-        deviceSeqBean.setContent(DataManager.getInstance().getDeviceSeq());
+
+//        OttSettingInfoBean deviceSeqBean = new OttSettingInfoBean();
+//        deviceSeqBean.setName(getString(R.string.ott_setting_device_seq));
+//        deviceSeqBean.setContent(DataManager.getInstance().getDeviceSeq());
+
+        OttSettingInfoBean appVersionBean = new OttSettingInfoBean();
+        appVersionBean.setName(getString(R.string.ott_setting_app_version));
+        appVersionBean.setContent(DataManager.getInstance().getAppVersion());
+
         OttSettingInfoBean memoryBean = new OttSettingInfoBean();
         memoryBean.setName(getString(R.string.ott_setting_device_memory));
         memoryBean.setContent(DataManager.getInstance().getMemory());
@@ -152,7 +158,8 @@ public class SettingOTTFragment extends Fragment implements View.OnClickListener
         this.deviceList.add(cpuBean);
         this.deviceList.add(memoryBean);
         this.deviceList.add(hardDiskBean);
-        this.deviceList.add(deviceSeqBean);
+//        this.deviceList.add(deviceSeqBean);
+        this.deviceList.add(appVersionBean);
         this.deviceList.add(ipAddressBean);
         this.deviceList.add(subNetMaskBean);
         this.deviceList.add(gatewayBean);

@@ -16,7 +16,7 @@ public class CommonField {
     public static final String CAPTURE_FILE_DIR = Environment.getExternalStorageDirectory().getAbsolutePath()+"/fkty/capture";//"/sdcard/vixtel/distribution";
     public static final String VIDEO_FILE_DIR = Environment.getExternalStorageDirectory().getAbsolutePath()+"/fkty/video";//"/sdcard/vixtel/distribution";
     public static final String REMOTE_BOX_UPGRADE_URL = "http://mirrors.edge.kernel.org/pub/linux/kernel/v1.2";
-    public static final String DEFAULT_PLATEFORM_URL = "http://218.108.168.177:4100"; //"http://211.136.99.12:4100"
+    public static final String DEFAULT_PLATEFORM_URL = "http://113.214.250.44/wasu";//"http://218.108.168.177:4100"; //"http://211.136.99.12:4100"
 
     public static String FORIG_URL_DEFAULT;
     public static String FORIG_URL_LIST;
@@ -62,6 +62,7 @@ public class CommonField {
     public static final int TEST_TYPE_SPEED = 1000;
     public static final String SHOW_SUB_DATA = "路由跳数";
 
+    public static final String[][] UNIT_SERVER={{"省公司","113.214.250.44","21","wasuftp","wasu@2019@","http://113.214.250.44/wasu"}};
 
     public static String URL_DEFAULT;
     public static String URL_LIST;

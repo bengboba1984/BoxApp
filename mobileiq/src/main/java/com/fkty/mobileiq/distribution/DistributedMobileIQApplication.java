@@ -46,7 +46,7 @@ public class DistributedMobileIQApplication extends Application {
 //        OkHttpUtils.getInstance().getOkHttpClient().connectTimeoutMillis().readTimeoutMillis()
         SystemManager.getInstance().initialize(this);
         CoreNotifier.getInstance().registerListener(OTTProperty.getInstance());
-        DataManager.getInstance().setUrl(CommonField.DEFAULT_PLATEFORM_URL);
+//        DataManager.getInstance().setUrl(CommonField.DEFAULT_PLATEFORM_URL);
 
 
     }

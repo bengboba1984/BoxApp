@@ -149,6 +149,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
         this.userIcon.setImageResource(R.mipmap.icon_user);
         this.viewPager.setAdapter(this.adapter);
 //        this.progressBar.setMessage("获取测试模板中");
+
         if (MWifiManager.getIntance().isBoxConnectNetwork())
         {
             CoreManager.getInstance().start();
@@ -159,6 +160,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
 //            WebHttpUtils.getInstance().setUrl(this, 1, DataManager.getInstance().getUrl());
             return;
         }
+
         this.connectStatus.setVisibility(View.VISIBLE);
     }
 
